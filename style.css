@@ -1,0 +1,84 @@
+/* ===== CORES E FONTES (altere aqui) ===== */
+:root {
+  --azul: #10245f;
+  --laranja: #ff5a00;
+  --amarelo: #f4b825;
+  --azul-claro: #2e7cc4;
+  --creme: #fbf7ef;
+  --branco: #ffffff;
+  --fonte: 'Montserrat', Arial, sans-serif;
+  --fonte-script: 'Pinyon Script', cursive;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--creme); color: var(--azul); font-family: var(--fonte); }
+a { color: inherit; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.secao { padding: 80px 0; }
+.secao.branco { background: var(--branco); }
+.centro { text-align: center; margin: 0 0 48px; }
+
+.titulo-script { font-family: var(--fonte-script); font-weight: 400; font-size: 48px; text-align: center; margin: 0 0 40px; }
+.script { font-family: var(--fonte-script); font-size: 34px; color: var(--amarelo); margin: 0; }
+
+/* Botões */
+.btn { display: inline-block; background: var(--amarelo); color: var(--azul); font-weight: 800; padding: 16px 32px; border-radius: 999px; text-decoration: none; }
+.btn-sm { font-weight: 600; font-size: 14px; padding: 12px 22px; }
+.btn-lg { font-size: 18px; padding: 18px 36px; }
+.btn:hover { filter: brightness(1.08); }
+
+/* Topo */
+.topo { display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: var(--azul); color: var(--creme); }
+.logo { font-size: 22px; letter-spacing: 1px; }
+.logo b, .rodape b { font-weight: 800; }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; background: var(--azul); color: var(--creme); text-align: center; padding: 96px 24px 120px; }
+.hero-grid { position: relative; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center; text-align: left; }
+.hero-conteudo { position: relative; }
+.hero-img { position: relative; width: 100%; max-width: 480px; justify-self: center; }
+.hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.05; font-weight: 800; margin: 12px 0 20px; }
+.sub { font-size: 18px; line-height: 1.6; max-width: 560px; margin: 0 0 36px; }
+.forma { position: absolute; }
+.f1 { left: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: var(--azul-claro); opacity: .5; }
+.f2 { right: 60px; bottom: 40px; width: 110px; height: 110px; border-radius: 50%; background: var(--laranja); }
+.f3 { left: 8%; bottom: -50px; width: 160px; height: 160px; border-radius: 50% 50% 0 0; background: var(--amarelo); }
+
+/* Grades */
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; }
+
+.dif { border-top: 4px solid var(--cor); padding-top: 16px; }
+.dif p { margin: 8px 0 0; line-height: 1.5; }
+
+/* Cartões de docinhos */
+.cartao { background: var(--creme); border-radius: 20px; padding: 32px; }
+.cartao.escuro { background: var(--azul); color: var(--creme); }
+.cartao h3 { margin: 0; font-size: 24px; font-weight: 800; }
+.precos { margin: 6px 0 20px; font-size: 15px; }
+.cartao ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; line-height: 1.4; }
+
+/* Barras e trufas */
+.caixa { border: 2px solid var(--azul); border-radius: 20px; padding: 28px; }
+.caixa.destaque { border-color: var(--laranja); }
+.caixa p { margin: 10px 0 0; line-height: 1.6; }
+.linha { display: flex; justify-content: space-between; gap: 12px; font-weight: 800; }
+
+/* CTA e rodapé */
+.cta { background: var(--azul); color: var(--creme); text-align: center; padding: 80px 24px; }
+.cta .script { font-size: 44px; }
+.cta h2 { font-size: clamp(30px, 5vw, 48px); font-weight: 800; margin: 8px 0 28px; }
+.rodape { padding: 28px 24px; text-align: center; font-size: 14px; }
+
+/* Celular */
+@media (max-width: 600px) {
+  .topo { padding: 16px 20px; }
+  .secao { padding: 56px 0; }
+  .titulo-script { font-size: 40px; }
+}
+
+/* Imagens */
+.banner { width: 100%; height: 360px; object-fit: cover; object-position: center 40%; border-radius: 20px; display: block; margin: 0 auto 24px; }
+.hero-img { border-radius: 24px; }
