@@ -138,12 +138,66 @@
     });
   });
 
-  // botão "Pedir" abre o WhatsApp com a mensagem pronta
+  // botão "Pedir" abre uma lista de quantidades; cada uma abre o WhatsApp
   const NUMERO = '5583991839139';
-  document.querySelectorAll('.pedir').forEach((a) => {
-    const msg = 'Olá! Quero encomendar: ' + a.dataset.pedido;
-    a.href = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(msg);
-    a.target = '_blank';
-    a.rel = 'noopener';
+  const PADRAO = '10,25,50,100';
+
+  function fecharOpcoes() {
+    document.querySelectorAll('.opcoes.aberto').forEach((o) => {
+      o.classList.remove('aberto');
+      o.previousElementSibling.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function link(texto) {
+    return 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(texto);
+  }
+
+  document.querySelectorAll('.pedir').forEach((btn) => {
+    const painel = btn.closest('.painel');
+    const unidades = (painel.dataset.unidades || PADRAO).split(',').map((s) => s.trim());
+    const nome = btn.dataset.pedido;
+
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+
+    const lista = document.createElement('ul');
+    lista.className = 'opcoes';
+
+    unidades.forEach((q) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = link('Olá! Quero encomendar: ' + q + (q === '1' ? ' unidade de ' : ' unidades de ') + nome);
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = q === '1' ? '1 unidade' : q + ' unidades';
+      li.appendChild(a);
+      lista.appendChild(li);
+    });
+
+    // opção para quem quer outra quantidade
+    const outro = document.createElement('li');
+    const aOutro = document.createElement('a');
+    aOutro.href = link('Olá! Quero encomendar: ' + nome + '. Gostaria de outra quantidade.');
+    aOutro.target = '_blank';
+    aOutro.rel = 'noopener';
+    aOutro.textContent = 'Outra quantidade';
+    outro.appendChild(aOutro);
+    lista.appendChild(outro);
+
+    btn.after(lista);
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const abrir = !lista.classList.contains('aberto');
+      fecharOpcoes();
+      lista.classList.toggle('aberto', abrir);
+      btn.setAttribute('aria-expanded', abrir);
+    });
   });
+
+  document.addEventListener('click', fecharOpcoes);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharOpcoes(); });
 })();
