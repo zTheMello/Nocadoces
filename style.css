@@ -54,19 +54,6 @@ a { color: inherit; }
 .dif { border-top: 4px solid var(--cor); padding-top: 16px; }
 .dif p { margin: 8px 0 0; line-height: 1.5; }
 
-/* Cartões de docinhos */
-.cartao { background: var(--branco); border-radius: 20px; padding: 32px; }
-.cartao.escuro { background: var(--azul); color: var(--creme); }
-.cartao h3 { margin: 0; font-size: 24px; font-weight: 800; }
-.precos { margin: 6px 0 20px; font-size: 15px; }
-.cartao ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; line-height: 1.4; }
-
-/* Barras e trufas */
-.caixa { border: 2px solid var(--azul); border-radius: 20px; padding: 28px; }
-.caixa.destaque { border-color: var(--laranja); }
-.caixa p { margin: 10px 0 0; line-height: 1.6; }
-.linha { display: flex; justify-content: space-between; gap: 12px; font-weight: 800; }
-
 /* CTA e rodapé */
 .cta { background: var(--azul); color: var(--creme); text-align: center; padding: 80px 24px; }
 .cta .script { font-size: 44px; }
