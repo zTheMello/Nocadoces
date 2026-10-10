@@ -22,19 +22,32 @@
 
   function ir(n) {
     atual = (n + total) % total;
+    trilho.querySelectorAll('video').forEach((v) => v.pause());
     trilho.style.transform = 'translateX(' + (-100 * atual) + '%)';
+    const v = trilho.children[atual].querySelector('video');
+    if (v) { v.currentTime = 0; v.play().catch(() => {}); }
     [...pontos.children].forEach((p, i) => {
       p.classList.toggle('ativo', i === atual);
       p.setAttribute('aria-selected', i === atual);
     });
   }
 
-  function iniciar() { parar(); timer = setInterval(() => ir(atual + 1), TEMPO); }
+  let tocando = false; // há vídeo tocando? então não troca de slide sozinho
+  function iniciar() { parar(); if (tocando) return; timer = setInterval(() => ir(atual + 1), TEMPO); }
   function parar() { clearInterval(timer); }
   function reiniciar() { iniciar(); }
 
   document.getElementById('ant').addEventListener('click', () => { ir(atual - 1); reiniciar(); });
   document.getElementById('prox').addEventListener('click', () => { ir(atual + 1); reiniciar(); });
+
+  // vídeo tocando segura o carrossel; ao pausar/terminar, ele volta a rodar
+  slider.addEventListener('play', (e) => { if (e.target.tagName === 'VIDEO') { tocando = true; parar(); } }, true);
+  slider.addEventListener('pause', (e) => {
+    if (e.target.tagName === 'VIDEO') { tocando = false; iniciar(); }
+  }, true);
+  slider.addEventListener('ended', (e) => {
+    if (e.target.tagName === 'VIDEO') { tocando = false; ir(atual + 1); iniciar(); }
+  }, true);
 
   // pausa ao passar o mouse
   slider.addEventListener('mouseenter', parar);
@@ -116,6 +129,155 @@
   }
 })();
 
+/* ===== FEEDBACKS: se a foto do cliente não existir, mostra a inicial do nome ===== */
+(function () {
+  document.querySelectorAll('.feedback-foto').forEach((img) => {
+    function trocar() {
+      const s = document.createElement('span');
+      s.className = 'feedback-foto inicial';
+      s.textContent = (img.dataset.nome || '?').trim().charAt(0).toUpperCase();
+      s.setAttribute('aria-hidden', 'true');
+      img.replaceWith(s);
+    }
+    img.addEventListener('error', trocar, { once: true });
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) trocar();
+  });
+})();
+
+/* ===== CARRINHO ===== */
+(function () {
+  const NUMERO = '5583991839139';
+  const CHAVE = 'nocadoces-carrinho';
+  const $ = (id) => document.getElementById(id);
+  const botao = $('carrinho-botao'), gaveta = $('carrinho'), fundo = $('carrinho-fundo');
+  if (!botao || !gaveta) return;
+  const lista = $('carrinho-lista'), vazio = $('carrinho-vazio'), contador = $('carrinho-qtd');
+  const totalEl = $('c-total'), nomeEl = $('c-nome'), dataEl = $('c-data'), aviso = $('aviso');
+  const enviar = $('c-enviar'), limpar = $('c-limpar'), fechar = $('carrinho-fechar');
+
+  let itens = [];
+  try { itens = JSON.parse(localStorage.getItem(CHAVE)) || []; } catch (e) { itens = []; }
+  if (!Array.isArray(itens)) itens = [];
+
+  const reais = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const salvar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(itens)); } catch (e) {} };
+
+  // a partir de 50 unidades vale o preço de atacado (ex.: 50 clássicos = R$ 65)
+  function subtotal(it) {
+    const u = it.granel && it.qtd >= 50 ? it.granel : it.unit;
+    return (u || 0) * it.qtd;
+  }
+
+  // data mínima: hoje
+  const hoje = new Date();
+  dataEl.min = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+
+  function atualizarResumo() {
+    const qtd = itens.reduce((s, i) => s + i.qtd, 0);
+    contador.textContent = qtd;
+    contador.hidden = qtd === 0;
+    botao.setAttribute('aria-label', qtd ? 'Abrir carrinho, ' + qtd + ' unidades' : 'Abrir carrinho');
+    totalEl.textContent = reais(itens.reduce((s, i) => s + subtotal(i), 0));
+    vazio.hidden = itens.length > 0;
+    enviar.disabled = limpar.disabled = itens.length === 0;
+  }
+
+  function render() {
+    lista.innerHTML = '';
+    itens.forEach((it, i) => {
+      const li = document.createElement('li');
+      li.className = 'c-item';
+      li.dataset.i = i;
+      li.innerHTML =
+        '<div class="c-topo"><b></b><button type="button" class="c-remover" data-acao="remover">Remover</button></div>' +
+        '<div class="c-linha"><div class="c-qtd">' +
+          '<button type="button" data-acao="menos" aria-label="Diminuir quantidade">&minus;</button>' +
+          '<input type="number" min="1" inputmode="numeric" aria-label="Quantidade">' +
+          '<button type="button" data-acao="mais" aria-label="Aumentar quantidade">+</button>' +
+        '</div><span class="c-preco"></span></div>' +
+        '<label class="c-obs">Personalização<input type="text" maxlength="120" placeholder="Ex.: sem granulado, para presente"></label>';
+      li.querySelector('b').textContent = it.nome;
+      li.querySelector('.c-remover').setAttribute('aria-label', 'Remover ' + it.nome);
+      li.querySelector('.c-qtd input').value = it.qtd;
+      li.querySelector('.c-preco').textContent = reais(subtotal(it));
+      li.querySelector('.c-obs input').value = it.obs || '';
+      lista.appendChild(li);
+    });
+    atualizarResumo();
+    salvar();
+  }
+
+  lista.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-acao]');
+    if (!b) return;
+    const i = +b.closest('.c-item').dataset.i, it = itens[i], passo = it.passo || 5;
+    if (b.dataset.acao === 'remover') itens.splice(i, 1);
+    if (b.dataset.acao === 'mais') it.qtd += passo;
+    if (b.dataset.acao === 'menos') it.qtd = Math.max(1, it.qtd - passo);
+    render();
+  });
+  lista.addEventListener('change', (e) => {
+    if (!e.target.matches('.c-qtd input')) return;
+    const it = itens[+e.target.closest('.c-item').dataset.i];
+    it.qtd = Math.max(1, parseInt(e.target.value, 10) || 1);
+    render();
+  });
+  lista.addEventListener('input', (e) => {
+    if (!e.target.matches('.c-obs input')) return;
+    itens[+e.target.closest('.c-item').dataset.i].obs = e.target.value;
+    salvar();
+  });
+
+  // aviso rápido
+  let tAviso;
+  function dizer(msg) {
+    aviso.textContent = msg;
+    aviso.classList.add('visivel');
+    clearTimeout(tAviso);
+    tAviso = setTimeout(() => aviso.classList.remove('visivel'), 2200);
+  }
+
+  document.addEventListener('carrinho:add', (e) => {
+    const d = e.detail;
+    const ja = itens.find((i) => i.nome === d.nome);
+    if (ja) ja.qtd += d.qtd;
+    else itens.push({ nome: d.nome, qtd: d.qtd, unit: d.unit, granel: d.granel, passo: d.passo, obs: '' });
+    render();
+    dizer(d.qtd + ' × ' + d.nome + ' no carrinho');
+  });
+
+  function abrir(sim) {
+    gaveta.classList.toggle('aberta', sim);
+    gaveta.setAttribute('aria-hidden', !sim);
+    fundo.hidden = !sim;
+    botao.setAttribute('aria-expanded', sim);
+    document.body.style.overflow = sim ? 'hidden' : '';
+    (sim ? fechar : botao).focus();
+  }
+  document.addEventListener('carrinho:abrir', () => abrir(true));
+  botao.addEventListener('click', () => abrir(!gaveta.classList.contains('aberta')));
+  fechar.addEventListener('click', () => abrir(false));
+  fundo.addEventListener('click', () => abrir(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && gaveta.classList.contains('aberta')) abrir(false); });
+
+  limpar.addEventListener('click', () => { itens = []; render(); });
+
+  enviar.addEventListener('click', () => {
+    if (!itens.length) return;
+    let msg = 'Olá! Quero fazer este pedido:\n';
+    itens.forEach((it) => {
+      msg += '\n• ' + it.qtd + (it.qtd === 1 ? ' unidade' : ' unidades') + ' de ' + it.nome;
+      if (it.obs && it.obs.trim()) msg += '\n   Personalização: ' + it.obs.trim();
+    });
+    msg += '\n\nValor estimado: ' + totalEl.textContent;
+    if (nomeEl.value.trim()) msg += '\nNome: ' + nomeEl.value.trim();
+    if (dataEl.value) msg += '\nData desejada: ' + dataEl.value.split('-').reverse().join('/');
+    window.open('https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  });
+
+  render();
+})();
+
 /* ===== CARDÁPIO ===== */
 (function () {
   const abas = [...document.querySelectorAll('.aba')];
@@ -138,8 +300,7 @@
     });
   });
 
-  // botão "Pedir" abre uma lista de quantidades; cada uma abre o WhatsApp
-  const NUMERO = '5583991839139';
+  // botão "Adicionar" abre uma lista de quantidades; cada uma coloca o item no carrinho
   const PADRAO = '10,25,50,100';
 
   function fecharOpcoes() {
@@ -149,13 +310,12 @@
     });
   }
 
-  function link(texto) {
-    return 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(texto);
-  }
-
   document.querySelectorAll('.pedir').forEach((btn) => {
     const painel = btn.closest('.painel');
     const unidades = (painel.dataset.unidades || PADRAO).split(',').map((s) => s.trim());
+    const passo = parseInt(painel.dataset.passo || '5', 10);
+    const granel = parseFloat(painel.dataset.granel) || 0;
+    const unit = parseFloat(btn.closest('.item').querySelector('.preco').textContent.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
     const nome = btn.dataset.pedido;
 
     btn.setAttribute('role', 'button');
@@ -165,26 +325,24 @@
     const lista = document.createElement('ul');
     lista.className = 'opcoes';
 
-    unidades.forEach((q) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = link('Olá! Quero encomendar: ' + q + (q === '1' ? ' unidade de ' : ' unidades de ') + nome);
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = q === '1' ? '1 unidade' : q + ' unidades';
-      li.appendChild(a);
-      lista.appendChild(li);
-    });
+    function adicionar(qtd, abrirCarrinho) {
+      document.dispatchEvent(new CustomEvent('carrinho:add', { detail: { nome, qtd, unit, granel, passo } }));
+      if (abrirCarrinho) document.dispatchEvent(new Event('carrinho:abrir'));
+      fecharOpcoes();
+    }
 
-    // opção para quem quer outra quantidade
-    const outro = document.createElement('li');
-    const aOutro = document.createElement('a');
-    aOutro.href = link('Olá! Quero encomendar: ' + nome + '. Gostaria de outra quantidade.');
-    aOutro.target = '_blank';
-    aOutro.rel = 'noopener';
-    aOutro.textContent = 'Outra quantidade';
-    outro.appendChild(aOutro);
-    lista.appendChild(outro);
+    function opcao(texto, qtd, abrirCarrinho) {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = texto;
+      b.addEventListener('click', (e) => { e.stopPropagation(); adicionar(qtd, abrirCarrinho); });
+      li.appendChild(b);
+      lista.appendChild(li);
+    }
+
+    unidades.forEach((q) => opcao(q === '1' ? '1 unidade' : q + ' unidades', parseInt(q, 10), false));
+    opcao('Outra quantidade', passo, true); // abre o carrinho para ajustar
 
     btn.after(lista);
 

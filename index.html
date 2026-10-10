@@ -25,6 +25,7 @@
       <li><a href="#diferenciais">Diferenciais</a></li>
       <li><a href="#galeria">Galeria</a></li>
       <li><a href="#cardapio">Cardápio</a></li>
+      <li><a href="#feedbacks">Feedbacks</a></li>
       <li><a class="menu-zap" href="https://wa.me/5583991839139">WhatsApp</a></li>
     </ul>
     <button class="menu-botao" id="menu-botao" aria-expanded="false" aria-controls="menu-lista" aria-label="Abrir menu">
@@ -44,7 +45,7 @@
       <p class="sub">Docinhos artesanais com sabores que equilibram tradição e criatividade, feitos para encantar.</p>
       <a class="btn" href="https://wa.me/5583991839139">Peça pelo WhatsApp</a>
     </div>
-    <img class="hero-img" src="./hero.jpg" alt="Caixa aberta com docinhos artesanais">
+    <img class="hero-img" src="./imagens/Doces4.jpg" alt="Caixa aberta com docinhos artesanais">
     </div>
   </section>
 
@@ -68,18 +69,44 @@
         <div class="slides" id="slides">
 
           <figure class="slide" aria-roledescription="slide">
-            <img src="./docinhos.jpg" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
+            <img src="./imagens/Doces2.JPG" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
             <figcaption><b>Cada um com seu charme</b>Rosinhas, granulados e amendoim: feitos à mão, um a um.</figcaption>
           </figure>
 
-          <figure class="slide" aria-roledescription="slide">
-            <img src="./caixa.jpg" alt="Caixa verde aberta com quatro docinhos cobertos de amendoim" loading="lazy">
-            <figcaption><b>Para presentear</b>Caixinhas prontas para encantar quem você ama.</figcaption>
+ <figure class="slide slide-video" aria-roledescription="slide">
+            <video src="./videos/Video2.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
           </figure>
 
           <figure class="slide" aria-roledescription="slide">
-            <img src="./hero.jpg" alt="Caixa aberta com docinhos artesanais" loading="lazy">
+            <img src="./imagens/Doces1.png" alt="Caixa verde aberta com quatro docinhos cobertos de amendoim" loading="lazy">
+            <figcaption><b>Para presentear</b>Caixinhas prontas para encantar quem você ama.</figcaption>
+          </figure>
+
+           <figure class="slide slide-video" aria-roledescription="slide">
+            <video src="./videos/Video1.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
+          </figure>
+
+          <figure class="slide" aria-roledescription="slide">
+            <img src="./imagens/Doces3.png" alt="Caixa aberta com docinhos artesanais" loading="lazy">
             <figcaption><b>Sabores que contam histórias</b>Do brigadeiro clássico ao gorgonzola com amora.</figcaption>
+          </figure>
+
+           <figure class="slide slide-video" aria-roledescription="slide">
+            <video src="./videos/Video3.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
+          </figure>
+
+          <figure class="slide" aria-roledescription="slide">
+            <img src="./imagens/Doces4.JPG" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
+            <figcaption><b>Cada um com seu charme</b>Rosinhas, granulados e amendoim: feitos à mão, um a um.</figcaption>
+          </figure>
+
+           <figure class="slide slide-video" aria-roledescription="slide">
+            <video src="./videos/Video4.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
+          </figure>
+
+          <figure class="slide" aria-roledescription="slide">
+            <img src="./imagens/Doces5.JPG" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
+            <figcaption><b>Cada um com seu charme</b>Rosinhas, granulados e amendoim: feitos à mão, um a um.</figcaption>
           </figure>
 
         </div>
@@ -95,7 +122,7 @@
   <section class="secao branco" id="cardapio">
     <div class="container">
       <h2 class="titulo-script">Cardápio</h2>
-      <p class="centro">Toque em um sabor para pedir pelo WhatsApp</p>
+      <p class="centro">Adicione os sabores ao carrinho, personalize cada um e envie tudo de uma vez pelo WhatsApp</p>
 
       <div class="abas" role="tablist" aria-label="Categorias do cardápio">
         <button class="aba ativo" role="tab" data-alvo="p-classicos" aria-selected="true">Clássicos</button>
@@ -105,28 +132,28 @@
       </div>
 
       <!-- Clássicos -->
-      <div class="painel ativo" id="p-classicos" role="tabpanel">
+      <div class="painel ativo" id="p-classicos" role="tabpanel" data-granel="1.3">
         <p class="painel-info">Unidade <b>R$ 2</b> · 50 und <b>R$ 65</b> · 100 und <b>R$ 130</b></p>
         <ul class="itens">
-          <li class="item"><div><b>Raiz</b><span>Brigadeiro tradicional</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Raiz (Brigadeiro tradicional)" aria-label="Pedir Raiz">Pedir</a></li>
-          <li class="item"><div><b>Doçura</b><span>Beijinho</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Doçura (Beijinho)" aria-label="Pedir Doçura">Pedir</a></li>
-          <li class="item"><div><b>Encanto</b><span>Uvinha</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Encanto (Uvinha)" aria-label="Pedir Encanto">Pedir</a></li>
-          <li class="item"><div><b>Bem amado</b><span>Café</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Bem amado (Café)" aria-label="Pedir Bem amado">Pedir</a></li>
-          <li class="item"><div><b>Roçado</b><span>Paçoca</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Roçado (Paçoca)" aria-label="Pedir Roçado">Pedir</a></li>
-          <li class="item"><div><b>Amado</b><span>Moranguinho</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Amado (Moranguinho)" aria-label="Pedir Amado">Pedir</a></li>
+          <li class="item"><div><b>Raiz</b><span>Brigadeiro tradicional</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Raiz (Brigadeiro tradicional)" aria-label="Adicionar Raiz">Adicionar</a></li>
+          <li class="item"><div><b>Doçura</b><span>Beijinho</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Doçura (Beijinho)" aria-label="Adicionar Doçura">Adicionar</a></li>
+          <li class="item"><div><b>Encanto</b><span>Uvinha</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Encanto (Uvinha)" aria-label="Adicionar Encanto">Adicionar</a></li>
+          <li class="item"><div><b>Bem amado</b><span>Café</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Bem amado (Café)" aria-label="Adicionar Bem amado">Adicionar</a></li>
+          <li class="item"><div><b>Roçado</b><span>Paçoca</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Roçado (Paçoca)" aria-label="Adicionar Roçado">Adicionar</a></li>
+          <li class="item"><div><b>Amado</b><span>Moranguinho</span></div><span class="preco">R$ 2</span><a class="pedir" href="#" data-pedido="Amado (Moranguinho)" aria-label="Adicionar Amado">Adicionar</a></li>
         </ul>
       </div>
 
       <!-- Especiais -->
-      <div class="painel" id="p-especiais" role="tabpanel" hidden>
+      <div class="painel" id="p-especiais" role="tabpanel" data-granel="1.7" hidden>
         <p class="painel-info">Unidade <b>R$ 3</b> · 50 und <b>R$ 85</b> · 100 und <b>R$ 170</b></p>
         <ul class="itens">
-          <li class="item"><div><b>Refresco</b><span>Limão siciliano</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Refresco (Limão siciliano)" aria-label="Pedir Refresco">Pedir</a></li>
-          <li class="item"><div><b>Romeu &amp; Julieta</b><span>Queijo e goiabada</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Romeu &amp; Julieta (Queijo e goiabada)" aria-label="Pedir Romeu e Julieta">Pedir</a></li>
-          <li class="item"><div><b>Atrevido</b><span>Gorgonzola &amp; geleia de amora</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Atrevido (Gorgonzola &amp; geleia de amora)" aria-label="Pedir Atrevido">Pedir</a></li>
-          <li class="item"><div><b>Calor</b><span>Chocolate meio amargo &amp; pimenta</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Calor (Chocolate meio amargo &amp; pimenta)" aria-label="Pedir Calor">Pedir</a></li>
-          <li class="item"><div><b>Cafuné</b><span>Ninho &amp; Nutella</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Cafuné (Ninho &amp; Nutella)" aria-label="Pedir Cafuné">Pedir</a></li>
-          <li class="item"><div><b>Brisa</b><span>Maracujá</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Brisa (Maracujá)" aria-label="Pedir Brisa">Pedir</a></li>
+          <li class="item"><div><b>Refresco</b><span>Limão siciliano</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Refresco (Limão siciliano)" aria-label="Adicionar Refresco">Adicionar</a></li>
+          <li class="item"><div><b>Romeu &amp; Julieta</b><span>Queijo e goiabada</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Romeu &amp; Julieta (Queijo e goiabada)" aria-label="Adicionar Romeu e Julieta">Adicionar</a></li>
+          <li class="item"><div><b>Atrevido</b><span>Gorgonzola &amp; geleia de amora</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Atrevido (Gorgonzola &amp; geleia de amora)" aria-label="Adicionar Atrevido">Adicionar</a></li>
+          <li class="item"><div><b>Calor</b><span>Chocolate meio amargo &amp; pimenta</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Calor (Chocolate meio amargo &amp; pimenta)" aria-label="Adicionar Calor">Adicionar</a></li>
+          <li class="item"><div><b>Cafuné</b><span>Ninho &amp; Nutella</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Cafuné (Ninho &amp; Nutella)" aria-label="Adicionar Cafuné">Adicionar</a></li>
+          <li class="item"><div><b>Brisa</b><span>Maracujá</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Brisa (Maracujá)" aria-label="Adicionar Brisa">Adicionar</a></li>
         </ul>
       </div>
 
@@ -134,26 +161,58 @@
       <div class="painel" id="p-trufas" role="tabpanel" hidden>
         <p class="painel-info">Pronta entrega e encomenda</p>
         <ul class="itens">
-          <li class="item"><div><b>Trufa de brigadeiro</b><span>Tradicional</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de brigadeiro" aria-label="Pedir Trufa de brigadeiro">Pedir</a></li>
-          <li class="item"><div><b>Trufa de beijinho</b><span>Coco</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de beijinho" aria-label="Pedir Trufa de beijinho">Pedir</a></li>
-          <li class="item"><div><b>Geleia de morango &amp; creme</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de geleia de morango &amp; creme" aria-label="Pedir Trufa de morango">Pedir</a></li>
-          <li class="item"><div><b>Geleia de maracujá &amp; creme</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de geleia de maracujá &amp; creme" aria-label="Pedir Trufa de maracujá">Pedir</a></li>
-          <li class="item"><div><b>Ninho &amp; Nutella</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de Ninho &amp; Nutella" aria-label="Pedir Trufa de Ninho e Nutella">Pedir</a></li>
-          <li class="item"><div><b>Limão siciliano</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de limão siciliano" aria-label="Pedir Trufa de limão siciliano">Pedir</a></li>
-          <li class="item"><div><b>Abacaxi e coco</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de abacaxi e coco" aria-label="Pedir Trufa de abacaxi e coco">Pedir</a></li>
-          <li class="item destaque"><div><b>Gorgonzola &amp; amora</b><span>Trufa especial</span></div><span class="preco">R$ 4</span><a class="pedir" href="#" data-pedido="Trufa especial de gorgonzola &amp; amora" aria-label="Pedir Trufa de gorgonzola e amora">Pedir</a></li>
-          <li class="item destaque"><div><b>Parmesão &amp; goiabada</b><span>Trufa especial</span></div><span class="preco">R$ 4</span><a class="pedir" href="#" data-pedido="Trufa especial de parmesão &amp; goiabada" aria-label="Pedir Trufa de parmesão e goiabada">Pedir</a></li>
+          <li class="item"><div><b>Trufa de brigadeiro</b><span>Tradicional</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de brigadeiro" aria-label="Adicionar Trufa de brigadeiro">Adicionar</a></li>
+          <li class="item"><div><b>Trufa de beijinho</b><span>Coco</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de beijinho" aria-label="Adicionar Trufa de beijinho">Adicionar</a></li>
+          <li class="item"><div><b>Geleia de morango &amp; creme</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de geleia de morango &amp; creme" aria-label="Adicionar Trufa de morango">Adicionar</a></li>
+          <li class="item"><div><b>Geleia de maracujá &amp; creme</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de geleia de maracujá &amp; creme" aria-label="Adicionar Trufa de maracujá">Adicionar</a></li>
+          <li class="item"><div><b>Ninho &amp; Nutella</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de Ninho &amp; Nutella" aria-label="Adicionar Trufa de Ninho e Nutella">Adicionar</a></li>
+          <li class="item"><div><b>Limão siciliano</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de limão siciliano" aria-label="Adicionar Trufa de limão siciliano">Adicionar</a></li>
+          <li class="item"><div><b>Abacaxi e coco</b><span>Trufa</span></div><span class="preco">R$ 3</span><a class="pedir" href="#" data-pedido="Trufa de abacaxi e coco" aria-label="Adicionar Trufa de abacaxi e coco">Adicionar</a></li>
+          <li class="item destaque"><div><b>Gorgonzola &amp; amora</b><span>Trufa especial</span></div><span class="preco">R$ 4</span><a class="pedir" href="#" data-pedido="Trufa especial de gorgonzola &amp; amora" aria-label="Adicionar Trufa de gorgonzola e amora">Adicionar</a></li>
+          <li class="item destaque"><div><b>Parmesão &amp; goiabada</b><span>Trufa especial</span></div><span class="preco">R$ 4</span><a class="pedir" href="#" data-pedido="Trufa especial de parmesão &amp; goiabada" aria-label="Adicionar Trufa de parmesão e goiabada">Adicionar</a></li>
         </ul>
       </div>
 
       <!-- Barras -->
-      <div class="painel" id="p-barras" role="tabpanel" data-unidades="1,2,3" hidden>
+      <div class="painel" id="p-barras" role="tabpanel" data-unidades="1,2,3" data-passo="1" hidden>
         <p class="painel-info">Pronta entrega e encomenda</p>
         <ul class="itens">
-          <li class="item"><div><b>Barra com frutas secas</b><span>Consultar disponibilidade</span></div><span class="preco">R$ 20</span><a class="pedir" href="#" data-pedido="Barra com frutas secas" aria-label="Pedir Barra com frutas secas">Pedir</a></li>
+          <li class="item"><div><b>Barra com frutas secas</b><span>Consultar disponibilidade</span></div><span class="preco">R$ 20</span><a class="pedir" href="#" data-pedido="Barra com frutas secas" aria-label="Adicionar Barra com frutas secas">Adicionar</a></li>
         </ul>
       </div>
 
+    </div>
+  </section>
+
+  <!-- FEEDBACKS -->
+  <!-- TROQUE nomes, textos e fotos pelos de clientes reais (fotos em ./imagens/clientes/) -->
+  <section class="secao" id="feedbacks">
+    <div class="container">
+      <h2 class="titulo-script">Feedbacks</h2>
+      <p class="centro">Quem já adoçou o dia com a Noca Doces</p>
+
+      <div class="feedbacks">
+        <article class="feedback">
+          <img class="feedback-foto" src="./imagens/clientes/cliente1.jpg" data-nome="Nome do cliente" alt="Foto de Nome do cliente" width="88" height="88" loading="lazy">
+          <div class="feedback-estrelas" role="img" aria-label="5 de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote>Escreva aqui o comentário do cliente. Os docinhos chegaram lindos e no horário combinado.</blockquote>
+          <p class="feedback-autor"><b>Nome do cliente</b><span>Aniversário</span></p>
+        </article>
+
+        <article class="feedback">
+          <img class="feedback-foto" src="./imagens/clientes/cliente2.jpg" data-nome="Nome do cliente" alt="Foto de Nome do cliente" width="88" height="88" loading="lazy">
+          <div class="feedback-estrelas" role="img" aria-label="5 de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote>Escreva aqui o comentário do cliente. O sabor de gorgonzola com amora surpreendeu todo mundo.</blockquote>
+          <p class="feedback-autor"><b>Nome do cliente</b><span>Encomenda para festa</span></p>
+        </article>
+
+        <article class="feedback">
+          <img class="feedback-foto" src="./imagens/clientes/cliente3.jpg" data-nome="Nome do cliente" alt="Foto de Nome do cliente" width="88" height="88" loading="lazy">
+          <div class="feedback-estrelas" role="img" aria-label="5 de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote>Escreva aqui o comentário do cliente. A caixinha de presente foi um sucesso.</blockquote>
+          <p class="feedback-autor"><b>Nome do cliente</b><span>Presente</span></p>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -168,6 +227,34 @@
   <footer class="rodape">
     <b>NOCA</b>DOCES · Instagram <a href="https://www.instagram.com/nocadoces/">@nocadoces</a>
   </footer>
+
+  <!-- CARRINHO -->
+  <button class="carrinho-botao" id="carrinho-botao" type="button" aria-label="Abrir carrinho" aria-expanded="false" aria-controls="carrinho">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6"/></svg>
+    <span class="carrinho-qtd" id="carrinho-qtd" hidden>0</span>
+  </button>
+  <div class="carrinho-fundo" id="carrinho-fundo" hidden></div>
+  <aside class="carrinho" id="carrinho" role="dialog" aria-modal="true" aria-labelledby="carrinho-titulo" aria-hidden="true">
+    <div class="carrinho-topo">
+      <h2 id="carrinho-titulo">Seu pedido</h2>
+      <button type="button" class="carrinho-fechar" id="carrinho-fechar" aria-label="Fechar carrinho">&times;</button>
+    </div>
+    <div class="carrinho-corpo">
+      <p class="carrinho-vazio" id="carrinho-vazio">Seu carrinho está vazio. Escolha sabores no cardápio e personalize cada um.</p>
+      <ul class="c-lista" id="carrinho-lista"></ul>
+    </div>
+    <div class="carrinho-rodape">
+      <div class="c-campos">
+        <label>Seu nome<input id="c-nome" type="text" autocomplete="name"></label>
+        <label>Data desejada<input id="c-data" type="date"></label>
+      </div>
+      <p class="c-total">Valor estimado <b id="c-total">R$ 0,00</b></p>
+      <p class="c-aviso">Pedidos a partir de 50 unidades têm preço de atacado. O valor final é confirmado no WhatsApp.</p>
+      <button class="c-enviar" id="c-enviar" type="button">Enviar pedido pelo WhatsApp</button>
+      <button class="c-limpar" id="c-limpar" type="button">Limpar carrinho</button>
+    </div>
+  </aside>
+  <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
   <script src="script.js"></script>
 </body>
