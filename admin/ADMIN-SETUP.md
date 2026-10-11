@@ -10,7 +10,7 @@ A cliente entra com e-mail e senha e edita o banner de promoção e o cardápio 
 ## 2. Criar as tabelas
 1. Abra o arquivo `supabase.sql` e troque `TROQUE-PELO-EMAIL-DA-CLIENTE@exemplo.com` pelo e-mail real da cliente.
    Só esse e-mail poderá alterar dados, mesmo que alguém consiga criar outra conta.
-2. No Supabase: **SQL Editor → New query**, cole o conteúdo inteiro e clique em **Run**. Rode uma única vez.
+2. No Supabase: **SQL Editor → New query**, cole o conteúdo inteiro e clique em **Run**. Pode rodar de novo quando houver atualização.
 
 ## 3. Criar o login da cliente
 1. **Authentication → Users → Add user → Create new user**.
@@ -23,8 +23,12 @@ A cliente entra com e-mail e senha e edita o banner de promoção e o cardápio 
    Nunca use a chave `service_role` neste arquivo.
 
 ## 5. Publicar
-Envie para o GitHub a estrutura inteira: na raiz `index.html`, `style.css`, `script.js`, `config.js` e, dentro da pasta `admin/`, `admin.html`, `admin.css`, `admin.js` (o `supabase.sql` e este guia são opcionais).
+Envie para o GitHub a estrutura inteira: na raiz `index.html` e `config.js` e, dentro da pasta `admin/`, o `admin.html` (o `supabase.sql` e este guia são opcionais; o `index.html` e o `admin.html` já trazem o CSS e o JavaScript dentro).
 Depois acesse `/admin/admin.html`, entre e teste uma alteração.
+
+## Atualização (feedbacks, novas versões)
+O `supabase.sql` é reexecutável: se já instalou antes, rode o arquivo de novo no **SQL Editor** para criar a tabela de feedbacks e outras novidades, sem duplicar o cardápio.
+Depois publique o `index.html` e a pasta `admin/`, abra a aba **Feedbacks** do painel e cadastre os comentários. Enquanto não houver nenhum cadastrado, o site mostra depoimentos de exemplo.
 
 ## Observações
 - Se o banco ficar fora do ar, o site continua mostrando o cardápio que está escrito no `index.html`.

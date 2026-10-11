@@ -391,7 +391,7 @@ function iniciarCardapio() {
   });
 }
 
-/* ===== DADOS EDITÁVEIS PELO PAINEL (promoção + cardápio) ===== */
+/* ===== DADOS EDITÁVEIS PELO PAINEL (promoção + cardápio + feedbacks) ===== */
 /* Se o painel não estiver configurado (config.js) ou o banco não responder,
    o site continua mostrando o cardápio que está escrito no index.html. */
 (function () {
@@ -460,6 +460,68 @@ function iniciarCardapio() {
     if (grande) { preencher('promo2'); grande.hidden = false; }
   }
 
+  /* ----- Feedbacks de clientes ----- */
+  function montarFeedbacks(rows) {
+    const sec = document.getElementById('feedbacks');
+    const caixa = sec && sec.querySelector('.feedbacks');
+    if (!caixa || !rows.length) return;          // lista vazia no banco: mantém os exemplos do index.html
+    const ativos = rows.filter((f) => f.ativo);
+    if (!ativos.length) {                        // tudo escondido no painel: some a seção e o link do menu
+      sec.style.display = 'none';
+      const li = document.querySelector('#menu-lista a[href="#feedbacks"]');
+      if (li && li.parentElement) li.parentElement.style.display = 'none';
+      return;
+    }
+    caixa.replaceChildren();
+    ativos.forEach((f) => {
+      const nome = f.nome || '';
+      const card = document.createElement('article');
+      card.className = 'feedback';
+
+      function inicial() {
+        const s = document.createElement('span');
+        s.className = 'feedback-foto inicial';
+        s.textContent = (nome.trim().charAt(0) || '?').toUpperCase();
+        s.setAttribute('aria-hidden', 'true');
+        return s;
+      }
+      if (f.foto_url && /^https:\/\//i.test(f.foto_url)) {
+        const img = document.createElement('img');
+        img.className = 'feedback-foto';
+        img.src = f.foto_url;
+        img.alt = 'Foto de ' + nome;
+        img.width = 88; img.height = 88; img.loading = 'lazy';
+        img.addEventListener('error', () => img.replaceWith(inicial()), { once: true });
+        card.appendChild(img);
+      } else {
+        card.appendChild(inicial());
+      }
+
+      const n = Math.min(5, Math.max(1, parseInt(f.estrelas, 10) || 5));
+      const est = document.createElement('div');
+      est.className = 'feedback-estrelas';
+      est.setAttribute('role', 'img');
+      est.setAttribute('aria-label', n + ' de 5 estrelas');
+      est.textContent = '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
+
+      const q = document.createElement('blockquote');
+      q.textContent = f.texto || '';
+
+      const autor = document.createElement('p');
+      autor.className = 'feedback-autor';
+      const b = document.createElement('b');
+      b.textContent = nome;
+      autor.appendChild(b);
+      if (f.ocasiao) {
+        const sp = document.createElement('span');
+        sp.textContent = f.ocasiao;
+        autor.appendChild(sp);
+      }
+      card.append(est, q, autor);
+      caixa.appendChild(card);
+    });
+  }
+
   /* ----- Cardápio ----- */
   function montarCardapio(cats, prods) {
     cats.forEach((c) => {
@@ -521,6 +583,10 @@ function iniciarCardapio() {
 
   buscar('promo', 'select=*&id=eq.1')
     .then((linhas) => mostrarPromo(linhas[0]))
+    .catch(() => {});
+
+  buscar('feedbacks', 'select=*&order=ordem.asc,id.asc')
+    .then(montarFeedbacks)
     .catch(() => {});
 
   Promise.all([

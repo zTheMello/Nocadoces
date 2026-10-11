@@ -50,13 +50,14 @@
     $('painel').hidden = false;
     carregarPromo();
     carregarCardapio();
+    carregarFeedbacks();
   }
   db.auth.getSession().then(({ data }) => { if (data.session) entrar(); });
 
   // abas do painel
   document.querySelectorAll('.a-abas button').forEach((b) => b.addEventListener('click', () => {
     document.querySelectorAll('.a-abas button').forEach((x) => x.classList.toggle('ativo', x === b));
-    ['a-promo', 'a-cardapio'].forEach((id) => { $(id).hidden = id !== b.dataset.aba; });
+    ['a-promo', 'a-cardapio', 'a-feedbacks'].forEach((id) => { $(id).hidden = id !== b.dataset.aba; });
   }));
 
   /* ---------- Promoção ---------- */
@@ -286,4 +287,141 @@
       botao.disabled = false;
     }
   }
+
+  /* ---------- Feedbacks ---------- */
+  let fbs = [];
+
+  async function carregarFeedbacks() {
+    const { data, error } = await db.from('feedbacks').select('*').order('ordem').order('id');
+    if (error) return dizer('Não consegui carregar os feedbacks. Você já rodou o supabase-feedbacks.sql?', true);
+    fbs = data;
+    desenharFeedbacks();
+  }
+
+  function desenharFeedbacks() {
+    const raiz = $('fb-lista');
+    raiz.replaceChildren();
+    if (!fbs.length) raiz.appendChild(el('p', { class: 'a-dica' }, 'Nenhum feedback cadastrado ainda. Enquanto a lista estiver vazia, o site mostra os textos de exemplo que estão no index.html.'));
+    fbs.forEach((f) => raiz.appendChild(linhaFb(f)));
+  }
+
+  function linhaFb(f) {
+    const r = el('div', { class: 'a-fb' + (f.ativo === false ? ' oculto' : '') });
+    r._id = f.id || null;
+    r._foto = f.foto_url || '';
+
+    // foto (ou inicial do nome)
+    const nome = el('input', { type: 'text', class: 'f-nome', value: f.nome || '', maxLength: 60, placeholder: 'Ex.: Maria Souza' });
+    const ocasiao = el('input', { type: 'text', class: 'f-ocasiao', value: f.ocasiao || '', maxLength: 60, placeholder: 'Ex.: Aniversário' });
+    const estrelas = el('select', { class: 'f-estrelas' });
+    [5, 4, 3, 2, 1].forEach((n) => estrelas.appendChild(el('option', { value: String(n) }, n + (n === 1 ? ' estrela' : ' estrelas'))));
+    estrelas.value = String(f.estrelas || 5);
+    const texto = el('textarea', { class: 'f-texto', rows: 3, maxLength: 300, placeholder: 'O que o cliente falou sobre os docinhos' });
+    texto.value = f.texto || '';
+
+    const foto = el('div', { class: 'a-fb-foto' });
+    const arquivo = el('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp', hidden: true });
+    const trocar = el('button', { type: 'button', class: 'a-link' }, 'Escolher foto');
+    const tirar = el('button', { type: 'button', class: 'a-link' }, 'Remover foto');
+    function desenharFoto() {
+      foto.replaceChildren();
+      if (r._foto) foto.appendChild(el('img', { class: 'a-fb-img', src: r._foto, alt: 'Foto do cliente' }));
+      else foto.appendChild(el('span', { class: 'a-fb-ini', 'aria-hidden': 'true' }, (nome.value.trim().charAt(0) || '?').toUpperCase()));
+      foto.append(trocar, arquivo);
+      if (r._foto) foto.appendChild(tirar);
+    }
+    nome.addEventListener('input', () => { if (!r._foto) desenharFoto(); });
+    trocar.addEventListener('click', () => arquivo.click());
+    tirar.addEventListener('click', () => { r._foto = ''; desenharFoto(); });
+    arquivo.addEventListener('change', async () => {
+      const a = arquivo.files[0];
+      if (!a) return;
+      if (!/^image\/(png|jpeg|webp)$/.test(a.type)) return dizer('Use uma foto PNG, JPG ou WEBP.', true);
+      if (a.size > 2 * 1024 * 1024) return dizer('A foto deve ter até 2 MB.', true);
+      const ext = a.type.split('/')[1].replace('jpeg', 'jpg');
+      const caminho = 'feedbacks/cliente-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '.' + ext;
+      dizer('Enviando foto...');
+      const { error } = await db.storage.from('imagens').upload(caminho, a, { contentType: a.type, cacheControl: '3600' });
+      if (error) return dizer('Erro ao enviar a foto.', true);
+      r._foto = db.storage.from('imagens').getPublicUrl(caminho).data.publicUrl;
+      desenharFoto();
+      dizer('Foto enviada. Clique em "Salvar feedbacks" para publicar.');
+    });
+    desenharFoto();
+
+    const visivel = el('input', { type: 'checkbox', class: 'f-ativo', checked: f.ativo !== false });
+    visivel.addEventListener('change', () => r.classList.toggle('oculto', !visivel.checked));
+    const sobe = el('button', { type: 'button', class: 'a-mini', title: 'Subir', 'aria-label': 'Subir feedback' }, '↑');
+    const desce = el('button', { type: 'button', class: 'a-mini', title: 'Descer', 'aria-label': 'Descer feedback' }, '↓');
+    sobe.addEventListener('click', () => { const a = r.previousElementSibling; if (a) r.parentNode.insertBefore(r, a); });
+    desce.addEventListener('click', () => { const b = r.nextElementSibling; if (b) r.parentNode.insertBefore(b, r); });
+    const excluir = el('button', { type: 'button', class: 'a-link' }, 'Excluir');
+    excluir.addEventListener('click', () => excluirFb(r));
+
+    const campo = (cls, legenda, input) => el('label', { class: 'a-campo ' + cls }, el('span', { class: 'a-leg' }, legenda), input);
+    r.append(
+      foto,
+      campo('c-fb-nome', 'Nome do cliente', nome),
+      campo('c-fb-oc', 'Ocasião (opcional)', ocasiao),
+      campo('c-fb-est', 'Estrelas', estrelas),
+      campo('c-fb-texto', 'Comentário', texto),
+      el('div', { class: 'a-opcoes' }, el('label', {}, visivel, 'Visível'), sobe, desce, excluir)
+    );
+    return r;
+  }
+
+  async function excluirFb(r) {
+    const nome = r.querySelector('.f-nome').value.trim() || 'este feedback';
+    if (!confirm('Excluir o feedback de "' + nome + '"? Não dá para desfazer.\n\nDica: para só esconder, desmarque "Visível".')) return;
+    if (r._id) {
+      const { error } = await db.from('feedbacks').delete().eq('id', r._id);
+      if (error) return dizer('Não foi possível excluir.', true);
+      fbs = fbs.filter((x) => x.id !== r._id);
+    }
+    r.remove();
+    dizer('Feedback excluído.');
+  }
+
+  $('fb-add').addEventListener('click', () => {
+    const lista = $('fb-lista');
+    if (!fbs.length && lista.querySelector('p.a-dica')) lista.replaceChildren();
+    const nova = linhaFb({ nome: '', ocasiao: '', texto: '', estrelas: 5, ativo: true });
+    lista.appendChild(nova);
+    nova.querySelector('.f-nome').focus();
+  });
+
+  $('fb-salvar').addEventListener('click', async () => {
+    const botao = $('fb-salvar');
+    const linhas = [...$('fb-lista').querySelectorAll('.a-fb')];
+    const existentes = [], novos = [];
+    for (let i = 0; i < linhas.length; i++) {
+      const r = linhas[i];
+      const nome = r.querySelector('.f-nome').value.trim();
+      const texto = r.querySelector('.f-texto').value.trim();
+      if (!nome) return dizer('Há um feedback sem nome (item ' + (i + 1) + ').', true);
+      if (!texto) return dizer('Escreva o comentário de "' + nome + '".', true);
+      const reg = {
+        nome,
+        ocasiao: r.querySelector('.f-ocasiao').value.trim() || null,
+        texto,
+        estrelas: parseInt(r.querySelector('.f-estrelas').value, 10) || 5,
+        foto_url: r._foto || null,
+        ativo: r.querySelector('.f-ativo').checked,
+        ordem: i + 1
+      };
+      if (r._id) { reg.id = r._id; existentes.push(reg); } else novos.push(reg);
+    }
+    botao.disabled = true;
+    try {
+      const r1 = existentes.length ? await db.from('feedbacks').upsert(existentes) : { error: null };
+      const r2 = novos.length ? await db.from('feedbacks').insert(novos) : { error: null };
+      if (r1.error || r2.error) throw new Error('falhou');
+      dizer('Feedbacks salvos!');
+      await carregarFeedbacks();
+    } catch (err) {
+      dizer('Não foi possível salvar. Verifique sua conexão e se você está logada.', true);
+    } finally {
+      botao.disabled = false;
+    }
+  });
 })();
