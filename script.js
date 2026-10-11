@@ -129,21 +129,6 @@
   }
 })();
 
-/* ===== FEEDBACKS: se a foto do cliente não existir, mostra a inicial do nome ===== */
-(function () {
-  document.querySelectorAll('.feedback-foto').forEach((img) => {
-    function trocar() {
-      const s = document.createElement('span');
-      s.className = 'feedback-foto inicial';
-      s.textContent = (img.dataset.nome || '?').trim().charAt(0).toUpperCase();
-      s.setAttribute('aria-hidden', 'true');
-      img.replaceWith(s);
-    }
-    img.addEventListener('error', trocar, { once: true });
-    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) trocar();
-  });
-})();
-
 /* ===== CARRINHO ===== */
 (function () {
   const NUMERO = '5583991839139';
@@ -391,6 +376,175 @@ function iniciarCardapio() {
   });
 }
 
+/* ===== FEEDBACKS: carrossel em cascata =====
+   Para trocar os depoimentos de exemplo, edite a lista abaixo.
+   Depois que o painel (admin) tiver feedbacks cadastrados, eles substituem esta lista. */
+const FBC_EXEMPLOS = [
+  { nome: 'Mariana S.', estrelas: 5, texto: 'Os docinhos chegaram lindos e no horário combinado. O brigadeiro estava no ponto certo e todo mundo pediu mais!' },
+  { nome: 'Rafael L.',  estrelas: 5, texto: 'O sabor de gorgonzola com geleia de amora surpreendeu a festa inteira. Atendimento atencioso do começo ao fim.' },
+  { nome: 'Juliana P.', estrelas: 5, texto: 'A caixinha de presente foi um sucesso! Embalagem caprichada e sabor de doce feito com carinho.' },
+  { nome: 'Camila R.',  estrelas: 5, texto: 'Encomendei para o aniversário da minha filha e foi perfeito. Já virei cliente fiel da Noca Doces.' },
+  { nome: 'Bruno A.',   estrelas: 5, texto: 'Trufas deliciosas e entrega pontual. A de parmesão com goiabada é a minha favorita.' }
+];
+
+const FBC = (function () {
+  const raiz = document.getElementById('feedbacks');
+  const palco = raiz && raiz.querySelector('.fbc-palco');
+  if (!palco) return { montar() {} };
+
+  const pontos = raiz.querySelector('.fbc-pontos');
+  const reduz = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const INTERVALO = 5000;
+  let cards = [], dots = [], atual = 0, timer = null;
+  let sobre = false, focado = false, naTela = true;
+
+  function criarCard(f, i, total) {
+    const nome = (f.nome || '').trim();
+    const n = Math.min(5, Math.max(1, parseInt(f.estrelas, 10) || 5));
+
+    const card = document.createElement('article');
+    card.className = 'fbc-card';
+    card.setAttribute('role', 'group');
+    card.setAttribute('aria-roledescription', 'depoimento');
+    card.setAttribute('aria-label', (i + 1) + ' de ' + total);
+
+    const est = document.createElement('div');
+    est.className = 'fbc-estrelas';
+    est.setAttribute('role', 'img');
+    est.setAttribute('aria-label', n + ' de 5 estrelas');
+    est.textContent = '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
+
+    const q = document.createElement('blockquote');
+    q.className = 'fbc-texto';
+    q.textContent = f.texto || '';
+
+    const autor = document.createElement('footer');
+    autor.className = 'fbc-autor';
+
+    function inicial() {
+      const sp = document.createElement('span');
+      sp.className = 'fbc-avatar';
+      sp.setAttribute('aria-hidden', 'true');
+      sp.textContent = (nome.charAt(0) || '?').toUpperCase();
+      return sp;
+    }
+    let avatar;
+    if (f.foto_url && /^https:\/\//i.test(f.foto_url)) {
+      avatar = document.createElement('img');
+      avatar.className = 'fbc-avatar';
+      avatar.src = f.foto_url;
+      avatar.alt = 'Foto de ' + nome;
+      avatar.width = 52; avatar.height = 52; avatar.loading = 'lazy';
+      avatar.addEventListener('error', () => avatar.replaceWith(inicial()), { once: true });
+    } else {
+      avatar = inicial();
+    }
+
+    const info = document.createElement('div');
+    const b = document.createElement('strong');
+    b.className = 'fbc-nome';
+    b.textContent = nome;
+    const selo = document.createElement('span');
+    selo.className = 'fbc-selo';
+    selo.textContent = 'Cliente Noca Doces' + (f.ocasiao ? ' \u00B7 ' + f.ocasiao : '');
+    info.append(b, selo);
+
+    autor.append(avatar, info);
+    card.append(est, q, autor);
+    return card;
+  }
+
+  /* posição de cada card em relação ao atual: -2, -1, 0, 1, 2 (ou "esq"/"dir" fora da cena) */
+  function render() {
+    const n = cards.length;
+    cards.forEach((c, i) => {
+      let d = (i - atual + n) % n;
+      if (d > n / 2) d -= n;                       // distância circular: o último "vizinha" do primeiro
+      const ativo = d === 0;
+      c.dataset.pos = Math.abs(d) <= 2 ? String(d) : (d > 0 ? 'dir' : 'esq');
+      c.setAttribute('aria-hidden', ativo ? 'false' : 'true');
+      c.inert = !ativo;                            // cards de fundo não recebem clique nem foco
+    });
+    dots.forEach((p, i) => {
+      if (i === atual) p.setAttribute('aria-current', 'true'); else p.removeAttribute('aria-current');
+    });
+  }
+
+  function parar() { clearTimeout(timer); timer = null; }
+  function agendar() {
+    parar();
+    if (reduz.matches || sobre || focado || !naTela || document.hidden || cards.length < 2) return;
+    timer = setTimeout(() => ir(atual + 1), INTERVALO);
+  }
+  function ir(i, manual) {
+    const n = cards.length;
+    if (!n) return;
+    atual = ((i % n) + n) % n;
+    if (manual) palco.setAttribute('aria-live', 'polite');   // leitores de tela anunciam só após ação do usuário
+    render();
+    agendar();                                               // reinicia a contagem dos 5 segundos
+  }
+
+  function montar(lista) {
+    if (!lista || !lista.length) return;
+    palco.replaceChildren();
+    pontos.replaceChildren();
+    cards = lista.map((f, i) => criarCard(f, i, lista.length));
+    cards.forEach((c) => palco.appendChild(c));
+    dots = lista.map((f, i) => {
+      const p = document.createElement('button');
+      p.type = 'button';
+      p.className = 'fbc-ponto';
+      p.setAttribute('aria-label', 'Ver depoimento ' + (i + 1) + ' de ' + lista.length);
+      p.addEventListener('click', () => ir(i, true));
+      pontos.appendChild(p);
+      return p;
+    });
+    raiz.classList.toggle('fbc-unico', lista.length < 2);
+    atual = 0;
+    render();
+    agendar();
+  }
+
+  /* botões, teclado, pausa e deslize */
+  raiz.querySelector('.fbc-ant').addEventListener('click', () => ir(atual - 1, true));
+  raiz.querySelector('.fbc-prox').addEventListener('click', () => ir(atual + 1, true));
+
+  raiz.addEventListener('keydown', (e) => {
+    const k = e.key;
+    if (k === 'ArrowLeft') ir(atual - 1, true);
+    else if (k === 'ArrowRight') ir(atual + 1, true);
+    else if (k === 'Home') ir(0, true);
+    else if (k === 'End') ir(cards.length - 1, true);
+    else return;
+    e.preventDefault();
+  });
+
+  raiz.addEventListener('mouseenter', () => { sobre = true; parar(); });
+  raiz.addEventListener('mouseleave', () => { sobre = false; agendar(); });
+  raiz.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) { focado = true; parar(); } });
+  raiz.addEventListener('focusout', (e) => { if (!raiz.contains(e.relatedTarget)) { focado = false; agendar(); } });
+
+  let x0 = null;
+  palco.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse' || e.button === 0) x0 = e.clientX; });
+  palco.addEventListener('pointerup', (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0;
+    x0 = null;
+    if (Math.abs(dx) > 45) ir(atual + (dx < 0 ? 1 : -1), true);
+  });
+  palco.addEventListener('pointercancel', () => { x0 = null; });
+
+  document.addEventListener('visibilitychange', agendar);
+  if (typeof reduz.addEventListener === 'function') reduz.addEventListener('change', agendar);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => { naTela = es[0].isIntersecting; agendar(); }, { threshold: 0.2 }).observe(raiz);
+  }
+
+  montar(FBC_EXEMPLOS);
+  return { montar };
+})();
+
 /* ===== DADOS EDITÁVEIS PELO PAINEL (promoção + cardápio + feedbacks) ===== */
 /* Se o painel não estiver configurado (config.js) ou o banco não responder,
    o site continua mostrando o cardápio que está escrito no index.html. */
@@ -460,66 +614,18 @@ function iniciarCardapio() {
     if (grande) { preencher('promo2'); grande.hidden = false; }
   }
 
-  /* ----- Feedbacks de clientes ----- */
+  /* ----- Feedbacks de clientes (vindos do painel) ----- */
   function montarFeedbacks(rows) {
-    const sec = document.getElementById('feedbacks');
-    const caixa = sec && sec.querySelector('.feedbacks');
-    if (!caixa || !rows.length) return;          // lista vazia no banco: mantém os exemplos do index.html
+    if (!rows.length) return;                    // nada cadastrado no painel: mantém os depoimentos de exemplo
     const ativos = rows.filter((f) => f.ativo);
     if (!ativos.length) {                        // tudo escondido no painel: some a seção e o link do menu
-      sec.style.display = 'none';
-      const li = document.querySelector('#menu-lista a[href="#feedbacks"]');
-      if (li && li.parentElement) li.parentElement.style.display = 'none';
+      const sec = document.getElementById('feedbacks');
+      if (sec) sec.style.display = 'none';
+      const link = document.querySelector('#menu-lista a[href="#feedbacks"]');
+      if (link && link.parentElement) link.parentElement.style.display = 'none';
       return;
     }
-    caixa.replaceChildren();
-    ativos.forEach((f) => {
-      const nome = f.nome || '';
-      const card = document.createElement('article');
-      card.className = 'feedback';
-
-      function inicial() {
-        const s = document.createElement('span');
-        s.className = 'feedback-foto inicial';
-        s.textContent = (nome.trim().charAt(0) || '?').toUpperCase();
-        s.setAttribute('aria-hidden', 'true');
-        return s;
-      }
-      if (f.foto_url && /^https:\/\//i.test(f.foto_url)) {
-        const img = document.createElement('img');
-        img.className = 'feedback-foto';
-        img.src = f.foto_url;
-        img.alt = 'Foto de ' + nome;
-        img.width = 88; img.height = 88; img.loading = 'lazy';
-        img.addEventListener('error', () => img.replaceWith(inicial()), { once: true });
-        card.appendChild(img);
-      } else {
-        card.appendChild(inicial());
-      }
-
-      const n = Math.min(5, Math.max(1, parseInt(f.estrelas, 10) || 5));
-      const est = document.createElement('div');
-      est.className = 'feedback-estrelas';
-      est.setAttribute('role', 'img');
-      est.setAttribute('aria-label', n + ' de 5 estrelas');
-      est.textContent = '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
-
-      const q = document.createElement('blockquote');
-      q.textContent = f.texto || '';
-
-      const autor = document.createElement('p');
-      autor.className = 'feedback-autor';
-      const b = document.createElement('b');
-      b.textContent = nome;
-      autor.appendChild(b);
-      if (f.ocasiao) {
-        const sp = document.createElement('span');
-        sp.textContent = f.ocasiao;
-        autor.appendChild(sp);
-      }
-      card.append(est, q, autor);
-      caixa.appendChild(card);
-    });
+    FBC.montar(ativos);
   }
 
   /* ----- Cardápio ----- */
