@@ -83,7 +83,9 @@ a { color: inherit; }
 
 /* ===== MENU FLUTUANTE ===== */
 .menu-flutuante { position: fixed; right: 20px; bottom: 20px; z-index: 100; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity .3s, transform .3s; }
-.menu-flutuante.visivel { opacity: 1; transform: none; pointer-events: auto; }
+.menu-flutuante.visivel { opacity: 1; transform: none; }
+/* só o botão (e a lista, quando aberta) recebem toque; a caixa invisível do menu não pode cobrir o cardápio */
+.menu-flutuante.visivel .menu-botao { pointer-events: auto; }
 
 .menu-botao { width: 60px; height: 60px; border: 0; border-radius: 50%; background: var(--amarelo); box-shadow: 0 8px 24px rgba(16, 36, 95, .35); cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; transition: transform .2s; }
 .menu-botao:hover { transform: scale(1.06); }
