@@ -158,13 +158,33 @@ a { color: inherit; }
 /* ===== FEEDBACKS ===== */
 .feedbacks { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 72px 24px; padding-top: 40px; }
 .feedback { position: relative; margin: 0; padding: 64px 28px 28px; background: var(--azul); color: var(--creme); border-radius: 24px; box-shadow: 0 12px 32px rgba(16, 36, 95, .18); }
-.feedback-foto { position: absolute; left: 24px; top: -40px; width: 88px; height: 88px; border-radius: 24px; object-fit: cover; border: 4px solid var(--creme); background: var(--amarelo); }
+.feedback-foto { position: absolute; left: 24px; top: -40px; width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 4px solid var(--creme); background: var(--amarelo); box-shadow: 0 8px 20px rgba(16, 36, 95, .35); }
 .feedback-foto.inicial { display: grid; place-items: center; font-size: 36px; font-weight: 800; color: var(--azul); }
 .feedback-estrelas { color: var(--amarelo); font-size: 18px; letter-spacing: 2px; margin-bottom: 12px; }
 .feedback blockquote { margin: 0 0 20px; font-size: 16px; line-height: 1.6; }
 .feedback-autor { margin: 0; display: grid; gap: 2px; }
 .feedback-autor b { font-weight: 800; color: var(--amarelo); }
 .feedback-autor span { font-size: 14px; opacity: .8; }
+
+/* feedbacks flutuando: cada card sobe e desce suavemente, um fora de sincronia do outro */
+.feedback {
+  animation: feedback-flutuar 6s ease-in-out infinite;
+  box-shadow: 0 18px 40px rgba(16, 36, 95, .28), 0 0 34px rgba(46, 124, 196, .30);
+  transition: box-shadow .3s ease;
+}
+.feedback:nth-child(2) { animation-delay: -2s; animation-duration: 7s; }
+.feedback:nth-child(3) { animation-delay: -4s; animation-duration: 6.5s; }
+.feedback:hover {
+  animation-play-state: paused;
+  box-shadow: 0 26px 52px rgba(16, 36, 95, .38), 0 0 46px rgba(244, 184, 37, .45);
+}
+@keyframes feedback-flutuar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .feedback { animation: none; }
+}
 
 /* ===== CARRINHO ===== */
 .carrinho-botao { position: fixed; left: 20px; bottom: 20px; z-index: 100; width: 60px; height: 60px; border: 0; border-radius: 50%; background: var(--laranja); color: #fff; box-shadow: 0 8px 24px rgba(16, 36, 95, .35); cursor: pointer; display: grid; place-items: center; transition: transform .2s; }
@@ -191,7 +211,7 @@ a { color: inherit; }
 .c-qtd { display: flex; align-items: center; border: 2px solid var(--azul); border-radius: 999px; overflow: hidden; }
 .c-qtd button { width: 40px; height: 40px; border: 0; background: transparent; color: var(--azul); font-size: 20px; font-weight: 800; cursor: pointer; }
 .c-qtd button:hover { background: rgba(16, 36, 95, .08); }
-.c-qtd input { width: 52px; height: 40px; border: 0; text-align: center; font-family: var(--fonte); font-weight: 800; font-size: 16px; color: var(--azul); background: transparent; -moz-appearance: textfield; }
+.c-qtd input { width: 52px; height: 40px; border: 0; text-align: center; font-family: var(--fonte); font-weight: 800; font-size: 16px; color: var(--azul); background: transparent; appearance: textfield; -moz-appearance: textfield; }
 .c-qtd input::-webkit-outer-spin-button, .c-qtd input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .c-preco { font-weight: 800; }
 .c-obs, .c-campos label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
