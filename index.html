@@ -60,63 +60,88 @@
     </div>
   </section>
 
-  <!-- GALERIA (SLIDES) -->
-  <section class="secao branco" id="galeria">
+    <!-- VITRINE FLUTUANTE (carrossel em cascata) -->
+  <section class="secao cs" id="vitrine" aria-labelledby="vitrine-titulo">
+    <span class="forma f1"></span>
+    <span class="forma f2"></span>
+    <span class="forma f3"></span>
     <div class="container">
-      <h2 class="titulo-script">Galeria</h2>
-
-      <div class="slider" id="slider" aria-roledescription="carrossel" aria-label="Fotos dos docinhos">
-        <div class="slides" id="slides">
-
-          <figure class="slide" aria-roledescription="slide">
-            <img src="./imagens/Doces3.png" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
-            <figcaption><b>Feitos à mão, um a um</b>Cada docinho é enrolado e finalizado com cuidado, do jeito caseiro.</figcaption>
-          </figure>
-
-          <figure class="slide slide-video" aria-roledescription="slide">
-            <video src="./videos/Video2.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
-          </figure>
-
-          <figure class="slide" aria-roledescription="slide">
-            <img src="./imagens/Doces1.png" alt="Caixa verde aberta com quatro docinhos cobertos de amendoim" loading="lazy">
-            <figcaption><b>Para presentear</b>Caixinhas prontas para encantar quem você ama.</figcaption>
-          </figure>
-
-           <figure class="slide slide-video" aria-roledescription="slide">
-            <video src="./videos/Video1.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
-          </figure>
-
-          <figure class="slide" aria-roledescription="slide">
-            <img src="./imagens/Doces2.png" alt="Caixa aberta com docinhos artesanais" loading="lazy">
-            <figcaption><b>Sabores que contam histórias</b>Do brigadeiro clássico ao gorgonzola com amora.</figcaption>
-          </figure>
-
-           <figure class="slide slide-video" aria-roledescription="slide">
-            <video src="./videos/Video3.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
-          </figure>
-
-          <figure class="slide" aria-roledescription="slide">
-            <img src="./imagens/Doces4.png" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
-            <figcaption><b>Cada um com seu charme</b>Rosinhas, granulados e amendoim: feitos à mão, um a um.</figcaption>
-          </figure>
-
-           <figure class="slide slide-video" aria-roledescription="slide">
-            <video src="./videos/Video4.mp4" controls muted playsinline preload="metadata" aria-label="Vídeo dos docinhos Noca Doces"></video>
-          </figure>
-
-          <figure class="slide" aria-roledescription="slide">
-            <img src="./imagens/Doces5.png" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy">
-            <figcaption><b>Para a sua festa</b>Aniversários e encontros ficam mais doces com uma encomenda sob medida.</figcaption>
-          </figure>
-
-        </div>
-
-        <button class="seta seta-ant" id="ant" aria-label="Slide anterior">&#10094;</button>
-        <button class="seta seta-prox" id="prox" aria-label="Próximo slide">&#10095;</button>
-        <div class="pontos" id="pontos" role="tablist" aria-label="Escolher slide"></div>
-      </div>
+      <h2 class="titulo-script" id="vitrine-titulo">Nossos docinhos</h2>
+      <p class="centro">Arraste ou use as setas para ver mais · Toque em um doce para ampliar</p>
     </div>
+
+    <div class="cs-palco" role="region" aria-roledescription="carrossel" aria-label="Vitrine de docinhos">
+      <div class="cs-janela" id="cs-janela" tabindex="0" aria-label="Use as setas do teclado para navegar pela vitrine">
+        <ul class="cs-trilho" id="cs-trilho">
+          <li class="cs-card" data-tipo="imagem">
+            <figure class="cs-card-in">
+              <img src="./imagens/Doces1.png" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy" decoding="async" draggable="false">
+              <figcaption><b>Pequenos detalhes, grandes encantos</b></figcaption>
+            </figure>
+          </li>
+          <li class="cs-card" data-tipo="video">
+            <figure class="cs-card-in">
+              <video class="cs-midia" src="./videos/Video1.mp4" aria-label="Caixa verde aberta com quatro docinhos cobertos de amendoim" autoplay muted loop playsinline preload="metadata" disablepictureinpicture draggable="false"></video>
+              <figcaption><b>Um presente cheio de sabor</b></figcaption>
+            </figure>
+          </li>
+          <li class="cs-card" data-tipo="imagem">
+            <figure class="cs-card-in">
+              <img src="./imagens/Doces2.png" alt="Caixa verde aberta com quatro docinhos cobertos de amendoim" loading="lazy" decoding="async" draggable="false">
+              <figcaption><b>Carinho em cada docinho</b></figcaption>
+            </figure>
+          </li>
+           <li class="cs-card" data-tipo="video">
+            <figure class="cs-card-in">
+              <video class="cs-midia" src="./videos/Video2.mp4" aria-label="Caixa verde aberta com quatro docinhos cobertos de amendoim" autoplay muted loop playsinline preload="metadata" disablepictureinpicture draggable="false"></video>
+              <figcaption><b>Uma tentação em cada mordida</b></figcaption>
+            </figure>
+          </li>
+          <li class="cs-card" data-tipo="imagem">
+            <figure class="cs-card-in">
+              <img src="./imagens/Doces3.png" alt="Caixa aberta com docinhos artesanais" loading="lazy" decoding="async" draggable="false">
+              <figcaption><b>Feitos para despertar sorrisos</b></figcaption>
+            </figure>
+          </li>
+           <li class="cs-card" data-tipo="video">
+            <figure class="cs-card-in">
+              <video class="cs-midia" src="./videos/Video3.mp4" aria-label="Caixa verde aberta com quatro docinhos cobertos de amendoim" autoplay muted loop playsinline preload="metadata" disablepictureinpicture draggable="false"></video>
+              <figcaption><b>O sabor que transforma momentos</b></figcaption>
+            </figure>
+          </li>
+          <li class="cs-card" data-tipo="imagem">
+            <figure class="cs-card-in">
+              <img src="./imagens/Doces4.png" alt="Caixa aberta com docinhos artesanais" loading="lazy" decoding="async" draggable="false">
+              <figcaption><b>Seu momento especial merece esse sabor</b></figcaption>
+            </figure>
+          </li>
+           <li class="cs-card" data-tipo="video">
+            <figure class="cs-card-in">
+              <video class="cs-midia" src="./videos/Video4.mp4" aria-label="Caixa verde aberta com quatro docinhos cobertos de amendoim" autoplay muted loop playsinline preload="metadata" disablepictureinpicture draggable="false"></video>
+              <figcaption><b>Beleza e sabor em perfeita harmonia</b></figcaption>
+            </figure>
+          </li>
+          <li class="cs-card" data-tipo="imagem">
+            <figure class="cs-card-in">
+              <img src="./imagens/Doces5.png" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy" decoding="async" draggable="false">
+              <figcaption><b>Deixe sua festa ainda mais doce</b></figcaption>
+            </figure>
+          </li>
+          <li class="cs-card" data-tipo="imagem">
+            <figure class="cs-card-in">
+              <img src="./imagens/Doces6.JPG" alt="Docinhos coloridos, rosas de brigadeiro e docinhos com amendoim" loading="lazy" decoding="async" draggable="false">
+              <figcaption><b>Para a sua festa</b></figcaption>
+            </figure>
+          </li>
+        </ul>
+      </div>
+      <button class="cs-seta cs-seta-ant" id="cs-ant" type="button" aria-label="Doces anteriores">&#10094;</button>
+      <button class="cs-seta cs-seta-prox" id="cs-prox" type="button" aria-label="Próximos doces">&#10095;</button>
+    </div>
+
+    <button class="cs-pausa" id="cs-pausa" type="button" aria-pressed="false">Pausar movimento</button>
   </section>
+
 
   <!-- CARDÁPIO -->
   <section class="secao branco" id="cardapio">
@@ -255,6 +280,16 @@
     </div>
   </aside>
   <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+  <!-- LIGHTBOX DA VITRINE -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Visualização ampliada" hidden>
+    <button class="lb-fechar" id="lb-fechar" type="button" aria-label="Fechar visualização">&times;</button>
+    <p class="lb-contador" id="lb-contador" aria-live="polite"></p>
+    <button class="lb-seta lb-ant" id="lb-ant" type="button" aria-label="Anterior">&#10094;</button>
+    <div class="lb-palco" id="lb-palco"></div>
+    <button class="lb-seta lb-prox" id="lb-prox" type="button" aria-label="Próximo">&#10095;</button>
+    <p class="lb-legenda" id="lb-legenda"></p>
+  </div>
 
   <script src="script.js"></script>
 </body>
