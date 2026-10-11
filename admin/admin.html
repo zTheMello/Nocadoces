@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel | Noca Doces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="a-wrap">
+
+    <!-- LOGIN -->
+    <section id="login" class="a-card a-login">
+      <h1 class="a-logo"><b>NOCA</b>DOCES</h1>
+      <p>Painel de edição do site</p>
+      <form id="login-form">
+        <label>E-mail<input id="l-email" type="email" autocomplete="username" required></label>
+        <label>Senha<input id="l-senha" type="password" autocomplete="current-password" required></label>
+        <button class="a-btn" type="submit">Entrar</button>
+        <p id="login-erro" class="a-erro" role="alert"></p>
+      </form>
+    </section>
+
+    <!-- PAINEL -->
+    <div id="painel" hidden>
+      <header class="a-topo">
+        <span class="a-logo"><b>NOCA</b>DOCES · Painel</span>
+        <div class="a-topo-acoes">
+          <a href="../index.html" target="_blank" rel="noopener">Ver site</a>
+          <button id="sair" type="button" class="a-btn a-btn-sec">Sair</button>
+        </div>
+      </header>
+
+      <nav class="a-abas" aria-label="Seções do painel">
+        <button type="button" class="ativo" data-aba="a-promo">Promoção</button>
+        <button type="button" data-aba="a-cardapio">Cardápio</button>
+      </nav>
+
+      <!-- Promoção -->
+      <section id="a-promo" class="a-card">
+        <h2>Banner de promoção</h2>
+        <p class="a-dica">O banner aparece no topo do site. Você pode ligar, desligar ou agendar as datas.</p>
+        <form id="promo-form">
+          <label class="a-check"><input id="p-ativo" type="checkbox"> Mostrar o banner no site</label>
+          <label>Título<input id="p-titulo" type="text" maxlength="80" placeholder="Ex.: Promoção de Dia das Crianças"></label>
+          <label>Texto<input id="p-texto" type="text" maxlength="160" placeholder="Ex.: 100 docinhos clássicos por R$ 120"></label>
+          <div class="a-duas">
+            <label>Texto do botão<input id="p-botao" type="text" maxlength="30" placeholder="Pedir pelo WhatsApp"></label>
+            <label>Link do botão<input id="p-link" type="text" maxlength="400" placeholder="https://wa.me/5583991839139"></label>
+          </div>
+          <div class="a-duas">
+            <label>Começa em (opcional)<input id="p-inicio" type="date"></label>
+            <label>Termina em (opcional)<input id="p-fim" type="date"></label>
+          </div>
+          <div class="a-imagem">
+            <span class="a-rotulo">Imagem do banner (opcional, até 3 MB)</span>
+            <img id="p-prev" alt="Prévia da imagem do banner" hidden>
+            <input id="p-arquivo" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+            <button id="p-remover-img" type="button" class="a-link" hidden>Remover imagem</button>
+          </div>
+          <button class="a-btn" type="submit">Salvar promoção</button>
+        </form>
+      </section>
+
+      <!-- Cardápio -->
+      <section id="a-cardapio" hidden>
+        <p class="a-dica a-dica-topo">Altere nomes, descrições e preços. Desmarque <b>Visível</b> para esconder um doce sem apagar. Depois de editar, clique em <b>Salvar</b> da categoria.</p>
+        <div id="cats"></div>
+      </section>
+    </div>
+  </main>
+  <div class="a-aviso" id="aviso" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

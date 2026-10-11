@@ -279,8 +279,9 @@
 })();
 
 /* ===== CARDÁPIO ===== */
-(function () {
-  const abas = [...document.querySelectorAll('.aba')];
+/* roda depois que os dados do painel chegam (veja "DADOS EDITÁVEIS PELO PAINEL" mais abaixo) */
+function iniciarCardapio() {
+  const abas =[...document.querySelectorAll('.aba')];
   const paineis = [...document.querySelectorAll('.painel')];
   if (!abas.length) return;
 
@@ -311,7 +312,7 @@
     if (!painel) return;
     paineis.forEach((p) => [...p.classList].forEach((c) => { if (c.indexOf('anim-') === 0) p.classList.remove(c); }));
     void painel.offsetWidth; // reinicia a animação
-    const classe = 'anim-barras';;
+    const classe = 'anim-barras';
     painel.classList.add(classe);
     clearTimeout(tAnim);
     // tira a classe no fim, para não repetir a entrada depois do hover
@@ -388,6 +389,147 @@
       if (e.animationName === 'item-clique') item.classList.remove('clicou');
     });
   });
+}
+
+/* ===== DADOS EDITÁVEIS PELO PAINEL (promoção + cardápio) ===== */
+/* Se o painel não estiver configurado (config.js) ou o banco não responder,
+   o site continua mostrando o cardápio que está escrito no index.html. */
+(function () {
+  const cfg = window.NOCA_CONFIG || {};
+  const configurado = cfg.url && cfg.chave && cfg.url.indexOf('SEU-PROJETO') === -1;
+  let iniciado = false;
+  function iniciar() { if (iniciado) return; iniciado = true; iniciarCardapio(); }
+
+  if (!configurado) { iniciar(); return; }
+
+  function buscar(tabela, consulta) {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 6000);
+    return fetch(cfg.url + '/rest/v1/' + tabela + '?' + consulta, {
+      // chaves novas ("sb_publishable_...") vão só em apikey; chaves antigas (JWT, começam com "eyJ") também em Authorization
+      headers: cfg.chave.indexOf('eyJ') === 0 ? { apikey: cfg.chave, Authorization: 'Bearer ' + cfg.chave } : { apikey: cfg.chave },
+      signal: ctl.signal
+    })
+      .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .finally(() => clearTimeout(t));
+  }
+
+  const brl = (n) => {
+    n = Number(n);
+    return 'R$ ' + (Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ','));
+  };
+
+  /* ----- Banner de promoção ----- */
+  function mostrarPromo(p) {
+    if (!p || !p.ativo || (!p.titulo && !p.texto)) return;
+
+    const d = new Date();
+    const hoje = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    if (p.inicio && hoje < p.inicio) return;
+    if (p.fim && hoje > p.fim) return;
+
+    const imgOk = p.imagem_url && /^https:\/\//i.test(p.imagem_url);
+    const btnOk = p.botao_texto && p.botao_link && /^(https?:\/\/|tel:|mailto:|#)/i.test(p.botao_link);
+
+    // preenche um banner (prefixo 'promo' = faixa do topo, 'promo2' = destaque no meio da página)
+    function preencher(pref) {
+      document.getElementById(pref + '-titulo').textContent = p.titulo || '';
+      document.getElementById(pref + '-desc').textContent = p.texto || '';
+      const img = document.getElementById(pref + '-img');
+      if (imgOk) { img.src = p.imagem_url; img.hidden = false; }
+      const btn = document.getElementById(pref + '-btn');
+      if (btnOk) { btn.textContent = p.botao_texto; btn.href = p.botao_link; btn.hidden = false; }
+    }
+
+    // 1) faixa do topo (some se a pessoa fechar; volta numa nova visita)
+    const box = document.getElementById('promo');
+    const chave = (p.titulo || '') + '|' + (p.texto || '');
+    let fechada = false;
+    try { fechada = sessionStorage.getItem('nocadoces-promo-fechada') === chave; } catch (e) {}
+    if (box && !fechada) {
+      preencher('promo');
+      document.getElementById('promo-fechar').addEventListener('click', () => {
+        box.hidden = true;
+        try { sessionStorage.setItem('nocadoces-promo-fechada', chave); } catch (e) {}
+      });
+      box.hidden = false;
+    }
+
+    // 2) destaque grande acima da galeria (fica sempre visível)
+    const grande = document.getElementById('promo-destaque');
+    if (grande) { preencher('promo2'); grande.hidden = false; }
+  }
+
+  /* ----- Cardápio ----- */
+  function montarCardapio(cats, prods) {
+    cats.forEach((c) => {
+      const painel = document.getElementById('p-' + c.slug);
+      if (!painel) return;
+
+      // opções de quantidade e preço de atacado, lidos pelo carrinho
+      if (Number(c.granel) > 0) painel.dataset.granel = c.granel; else delete painel.dataset.granel;
+      if (c.unidades) painel.dataset.unidades = c.unidades; else delete painel.dataset.unidades;
+      if (c.passo) painel.dataset.passo = c.passo; else delete painel.dataset.passo;
+
+      const info = painel.querySelector('.painel-info');
+      if (info) {
+        info.replaceChildren();
+        const g = Number(c.granel), base = Number(c.preco_base);
+        if (g > 0 && base > 0) {
+          const parte = (texto, valor) => {
+            info.append(texto);
+            const b = document.createElement('b');
+            b.textContent = brl(valor);
+            info.append(b);
+          };
+          parte('Unidade ', base);
+          parte(' · 50 und ', Math.round(g * 50 * 100) / 100);
+          parte(' · 100 und ', Math.round(g * 100 * 100) / 100);
+        } else {
+          info.textContent = c.info || '';
+        }
+      }
+
+      const ul = painel.querySelector('.itens');
+      if (!ul) return;
+      ul.replaceChildren();
+      prods.filter((p) => p.categoria === c.slug).forEach((p) => {
+        const li = document.createElement('li');
+        li.className = 'item' + (p.destaque ? ' destaque' : '');
+
+        const div = document.createElement('div');
+        const b = document.createElement('b'); b.textContent = p.nome;
+        const s = document.createElement('span'); s.textContent = p.descricao || '';
+        div.append(b, s);
+
+        const preco = document.createElement('span');
+        preco.className = 'preco';
+        preco.textContent = brl(p.preco);
+
+        const a = document.createElement('a');
+        a.className = 'pedir';
+        a.href = '#';
+        a.dataset.pedido = p.pedido || (p.descricao ? p.nome + ' (' + p.descricao + ')' : p.nome);
+        a.setAttribute('aria-label', 'Adicionar ' + p.nome);
+        a.textContent = 'Adicionar';
+
+        li.append(div, preco, a);
+        ul.appendChild(li);
+      });
+    });
+  }
+
+  buscar('promo', 'select=*&id=eq.1')
+    .then((linhas) => mostrarPromo(linhas[0]))
+    .catch(() => {});
+
+  Promise.all([
+    buscar('categorias', 'select=*&order=ordem.asc'),
+    buscar('produtos', 'select=*&ativo=eq.true&order=ordem.asc,id.asc')
+  ])
+    .then(([cats, prods]) => { if (cats.length) montarCardapio(cats, prods); })
+    .catch(() => {})
+    .then(iniciar);
 })();
 
 /* ===== VITRINE FLUTUANTE (carrossel em cascata) ===== */
@@ -809,4 +951,18 @@
   x = Math.max(largura - 60, 0);   // começa com um pouco da cascata já à esquerda
   desenhar();
   aplicarMovimento();
+})();
+
+/* ===== ACESSO ESCONDIDO AO PAINEL ===== */
+/* 3 cliques rápidos no "O" de NOCA (no topo) abrem o admin/admin.html */
+(function () {
+  const o = document.getElementById('logo-o');
+  if (!o) return;
+  let cliques = 0, t;
+  o.addEventListener('click', () => {
+    cliques++;
+    clearTimeout(t);
+    t = setTimeout(() => { cliques = 0; }, 800);
+    if (cliques >= 3) { cliques = 0; window.location.href = 'admin/admin.html'; }
+  });
 })();

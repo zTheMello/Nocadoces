@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- ===== HEAD ===== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Noca Doces | Docinhos por encomenda</title>
   <meta name="description" content="Docinhos artesanais por encomenda. Adoçando o mundo, um docinho por vez.">
+  <meta name="author" content="zthemello">
+
+  <!-- Fontes e estilos -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ===== BODY ===== -->
+
+  <!-- ===== TOPO: banner de promoção, cabeçalho e menu ===== -->
+  <!-- BANNER DE PROMOÇÃO (editado pelo painel /admin/admin.html; fica escondido quando não há promoção) -->
+  <div class="promo" id="promo" role="region" aria-label="Promoção" hidden>
+    <img class="promo-img" id="promo-img" alt="" hidden>
+    <p class="promo-texto"><b id="promo-titulo"></b><span id="promo-desc"></span></p>
+    <a class="promo-btn" id="promo-btn" href="#" hidden></a>
+    <button class="promo-fechar" id="promo-fechar" type="button" aria-label="Fechar aviso de promoção">&times;</button>
+  </div>
 
   <!-- CABEÇALHO -->
   <header class="topo">
-    <div class="logo"><b>NOCA</b>DOCES</div>
+    <div class="logo"><b>N<span class="logo-o" id="logo-o">O</span>CA</b>DOCES</div>
     <a class="btn btn-sm" href="#cardapio">Fazer encomenda</a>
   </header>
 
@@ -32,6 +46,9 @@
       <span></span><span></span><span></span>
     </button>
   </nav>
+
+  <!-- ===== MAIN: conteúdo principal ===== -->
+  <main id="conteudo">
 
   <!-- HERO -->
   <section class="hero" id="inicio">
@@ -57,6 +74,21 @@
       <div class="dif" style="--cor:#f4b825"><b>Ingredientes selecionados</b><p>Qualidade que você sente no sabor.</p></div>
       <div class="dif" style="--cor:#2e7cc4"><b>Tradição e criatividade</b><p>Do brigadeiro clássico ao gorgonzola com amora.</p></div>
       <div class="dif" style="--cor:#10245f"><b>Pensado para encantar</b><p>Uma experiência para presentear e celebrar.</p></div>
+    </div>
+  </section>
+
+  <!-- PROMOÇÃO EM DESTAQUE (mesmos dados do banner do topo; editado pelo painel) -->
+  <section class="promo-destaque" id="promo-destaque" aria-label="Promoção em destaque" hidden>
+    <div class="container">
+      <div class="promo-card">
+        <img class="promo-card-img" id="promo2-img" alt="" hidden>
+        <div class="promo-card-corpo">
+          <span class="promo-card-selo">Promoção</span>
+          <h2 class="promo-card-titulo" id="promo2-titulo"></h2>
+          <p class="promo-card-texto" id="promo2-desc"></p>
+          <a class="promo-card-btn" id="promo2-btn" href="#" hidden></a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -248,10 +280,15 @@
     <a class="btn btn-lg" href="https://wa.me/5583991839139">WhatsApp (83) 99183-9139</a>
   </section>
 
-  <!-- RODAPÉ -->
+  </main>
+
+  <!-- ===== FOOTER ===== -->
   <footer class="rodape">
-    <b>NOCA</b>DOCES · Instagram <a href="https://www.instagram.com/nocadoces/">@nocadoces</a>
+    <p class="rodape-marca"><b>NOCA</b>DOCES · Instagram <a href="https://www.instagram.com/nocadoces/">@nocadoces</a></p>
+    <p class="assinatura">Feito por <a href="https://github.com/zTheMello" target="_blank" rel="noopener">zthemello.</a></p>
   </footer>
+
+  <!-- ===== EXTRAS (sobrepostos à página): carrinho, aviso e visualizador ===== -->
 
   <!-- CARRINHO -->
   <button class="carrinho-botao" id="carrinho-botao" type="button" aria-label="Abrir carrinho" aria-expanded="false" aria-controls="carrinho">
@@ -291,6 +328,8 @@
     <p class="lb-legenda" id="lb-legenda"></p>
   </div>
 
+  <!-- ===== SCRIPTS ===== -->
+  <script src="config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
