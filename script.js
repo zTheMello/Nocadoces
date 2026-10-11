@@ -297,8 +297,26 @@
         p.classList.toggle('ativo', ativo);
         p.hidden = !ativo;
       });
+      animarPainel(document.getElementById(aba.dataset.alvo));
     });
   });
+
+  // cada aba abre os itens com uma animação diferente (definidas no CSS: .anim-classicos, .anim-especiais...)
+  document.querySelectorAll('.itens').forEach((ul) => {
+    [...ul.children].forEach((li, i) => li.style.setProperty('--i', i)); // ordem do item, usada no atraso
+  });
+
+  let tAnim;
+  function animarPainel(painel) {
+    if (!painel) return;
+    paineis.forEach((p) => [...p.classList].forEach((c) => { if (c.indexOf('anim-') === 0) p.classList.remove(c); }));
+    void painel.offsetWidth; // reinicia a animação
+    const classe = 'anim-barras';;
+    painel.classList.add(classe);
+    clearTimeout(tAnim);
+    // tira a classe no fim, para não repetir a entrada depois do hover
+    tAnim = setTimeout(() => painel.classList.remove(classe), 1700);
+  }
 
   // botão "Adicionar" abre uma lista de quantidades; cada uma coloca o item no carrinho
   const PADRAO = '10,25,50,100';
@@ -358,6 +376,18 @@
 
   document.addEventListener('click', fecharOpcoes);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharOpcoes(); });
+
+  // animação de clique: a linha "afunda" e volta com um pulinho
+  document.querySelectorAll('.itens .item').forEach((item) => {
+    item.addEventListener('click', () => {
+      item.classList.remove('clicou');
+      void item.offsetWidth; // reinicia a animação se clicar de novo rápido
+      item.classList.add('clicou');
+    });
+    item.addEventListener('animationend', (e) => {
+      if (e.animationName === 'item-clique') item.classList.remove('clicou');
+    });
+  });
 })();
 
 /* ===== VITRINE FLUTUANTE (carrossel em cascata) ===== */

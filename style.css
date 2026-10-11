@@ -153,6 +153,91 @@ a { color: inherit; }
 .opcoes li:last-child a, .opcoes li:last-child button { margin-top: 4px; border-top: 1px solid rgba(255, 255, 255, .2); border-radius: 0 0 10px 10px; }
 .opcoes button { width: 100%; border: 0; background: none; text-align: left; font-family: var(--fonte); cursor: pointer; }
 
+/* ===== ANIMAÇÃO DOS ITENS DO CARDÁPIO (mouse em cima) ===== */
+.item {
+  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), box-shadow .3s ease, background .3s ease, border-left-width .2s ease, border-left-color .3s ease;
+}
+.item b { transition: color .3s ease, letter-spacing .3s ease; }
+.item .preco { transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), color .3s ease; }
+.pedir { transition: filter .2s, transform .3s cubic-bezier(.34, 1.56, .64, 1), box-shadow .3s ease; }
+
+/* o item ativo fica acima dos vizinhos (o menu de quantidades não pode ficar escondido) */
+.item:hover, .item:focus-within { z-index: 5; }
+.item:has(.opcoes.aberto) { z-index: 10; }
+
+/* cada linha tem a sua própria animação enquanto o mouse está em cima */
+@keyframes item-flutuar  { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(-9px); } }
+@keyframes item-balancar { 0%, 100% { transform: translateY(-4px) rotate(-.9deg); } 50% { transform: translateY(-4px) rotate(.9deg); } }
+@keyframes item-pular    { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-12px); } 55% { transform: translateY(-2px); } 75% { transform: translateY(-6px); } }
+@keyframes item-deslizar { 0%, 100% { transform: translateX(6px); } 50% { transform: translateX(16px); } }
+@keyframes item-pulsar   { 0%, 100% { transform: translateY(-3px) scale(1.01); } 50% { transform: translateY(-3px) scale(1.035); } }
+@keyframes item-onda     { 0%, 100% { transform: translateY(-3px) skewX(0deg); } 25% { transform: translateY(-7px) skewX(-1.5deg); } 75% { transform: translateY(-7px) skewX(1.5deg); } }
+
+/* clique: o item "afunda" e volta com um pulinho */
+@keyframes item-clique { 0% { transform: scale(1); } 35% { transform: scale(.95); } 70% { transform: scale(1.04); } 100% { transform: scale(1); } }
+.item.clicou { animation: item-clique .45s ease !important; background: #fff6d6; }
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover, .item:focus-within {
+    background: var(--branco);
+    border-left-width: 9px;
+    border-left-color: var(--laranja);
+    box-shadow: 0 16px 32px rgba(16, 36, 95, .2);
+    animation-duration: 2.2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  .itens .item:nth-child(6n+1):hover, .itens .item:nth-child(6n+1):focus-within { animation-name: item-flutuar; }
+  .itens .item:nth-child(6n+2):hover, .itens .item:nth-child(6n+2):focus-within { animation-name: item-balancar; animation-duration: 1.6s; }
+  .itens .item:nth-child(6n+3):hover, .itens .item:nth-child(6n+3):focus-within { animation-name: item-pular; animation-duration: 1.4s; }
+  .itens .item:nth-child(6n+4):hover, .itens .item:nth-child(6n+4):focus-within { animation-name: item-deslizar; animation-duration: 1.8s; }
+  .itens .item:nth-child(6n+5):hover, .itens .item:nth-child(6n+5):focus-within { animation-name: item-pulsar; animation-duration: 1.5s; }
+  .itens .item:nth-child(6n+6):hover, .itens .item:nth-child(6n+6):focus-within { animation-name: item-onda; animation-duration: 2s; }
+
+  .item:hover b { color: var(--azul-claro); letter-spacing: .4px; }
+  .item:hover .preco { transform: scale(1.12); color: var(--laranja); }
+  .item:hover .pedir { transform: scale(1.08) rotate(-2deg); box-shadow: 0 6px 16px rgba(244, 184, 37, .55); }
+}
+.item:active .pedir { transform: scale(.94); }
+
+/* ===== ANIMAÇÃO DE ENTRADA DE CADA ABA ===== */
+/* Clássicos: um item vem da esquerda e outro da direita, e param no meio */
+@keyframes ent-esq { from { opacity: 0; transform: translateX(-120%); } to { opacity: 1; transform: none; } }
+@keyframes ent-dir { from { opacity: 0; transform: translateX(120%); } to { opacity: 1; transform: none; } }
+.painel.anim-classicos .item { animation: ent-esq .7s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * .09s); }
+.painel.anim-classicos .item:nth-child(even) { animation-name: ent-dir; }
+
+/* Especiais: caem de cima, com um quique, um depois do outro */
+@keyframes ent-cair {
+  0% { opacity: 0; transform: translateY(-70px) rotate(-3deg); }
+  60% { opacity: 1; transform: translateY(8px) rotate(.8deg); }
+  80% { transform: translateY(-4px); }
+  100% { opacity: 1; transform: none; }
+}
+.painel.anim-especiais .item { animation: ent-cair .8s ease-out backwards; animation-delay: calc(var(--i, 0) * .1s); }
+
+/* Trufas: aparecem "estourando", crescendo do centro com um giro leve */
+@keyframes ent-estourar {
+  0% { opacity: 0; transform: scale(.4) rotate(-6deg); }
+  70% { opacity: 1; transform: scale(1.06) rotate(1deg); }
+  100% { opacity: 1; transform: none; }
+}
+.painel.anim-trufas .item { animation: ent-estourar .6s cubic-bezier(.34, 1.4, .64, 1) backwards; animation-delay: calc(var(--i, 0) * .07s); }
+
+/* Barras: o item vira como uma placa, subindo de baixo */
+@keyframes ent-virar {
+  0% { opacity: 0; transform: perspective(700px) translateY(60px) rotateX(-70deg); }
+  100% { opacity: 1; transform: none; }
+}
+.painel.anim-barras .item { animation: ent-virar .8s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * .1s); transform-origin: bottom center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .painel[class*="anim-"] .item { animation: none !important; }
+  .item, .item b, .item .preco, .pedir { transition: none; }
+  .item:hover, .item:focus-within, .item.clicou { animation: none !important; }
+  .item:hover .preco, .item:hover .pedir { transform: none; }
+}
+
 /* ===== VÍDEO NA GALERIA ===== */
 .slide-video { background: var(--azul); padding-bottom: 56px; }
 .slide video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
