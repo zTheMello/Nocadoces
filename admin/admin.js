@@ -174,9 +174,7 @@
       lista.appendChild(nova);
       nova.querySelector('.f-nome').focus();
     });
-    const salvar = el('button', { type: 'button', class: 'a-btn' }, 'Salvar ' + c.titulo);
-    salvar.addEventListener('click', () => salvarCategoria(c, sec, salvar));
-    acoes.append(add, salvar);
+    acoes.append(add);
     sec.appendChild(acoes);
     return sec;
   }
@@ -234,20 +232,22 @@
 
   const numero = (txt) => { const n = parseFloat(String(txt).replace(',', '.')); return Number.isFinite(n) ? n : null; };
 
-  async function salvarCategoria(c, sec, botao) {
+  // lê e valida uma categoria; devolve os dados para gravar (ou null, já avisando o erro na tela)
+  function coletarCategoria(c, sec) {
+    const invalido = (msg) => { dizer(msg, true); return null; };
     const linhas = [...sec.querySelectorAll('.a-linha')];
-    const existentes = [], novos = [];
+    const existentes = [], novos = [], novasLinhas = [];
 
     for (let i = 0; i < linhas.length; i++) {
       const r = linhas[i];
       const nome = r.querySelector('.f-nome').value.trim();
       const preco = numero(r.querySelector('.f-preco').value);
-      if (!nome) return dizer('Há um item sem nome (linha ' + (i + 1) + ' de ' + c.titulo + ').', true);
-      if (preco === null || preco < 0) return dizer('Preço inválido em "' + nome + '".', true);
+      if (!nome) return invalido('Há um item sem nome (linha ' + (i + 1) + ' de ' + c.titulo + ').');
+      if (preco === null || preco < 0) return invalido('Preço inválido em "' + nome + '".');
       const promoTxt = r.querySelector('.f-promo').value.trim();
       const promo = promoTxt === '' ? null : numero(promoTxt);
-      if (promoTxt !== '' && (promo === null || promo < 0)) return dizer('Preço promocional inválido em "' + nome + '".', true);
-      if (promo !== null && promo >= preco) return dizer('Em "' + nome + '", o preço promocional deve ser menor que o preço normal.', true);
+      if (promoTxt !== '' && (promo === null || promo < 0)) return invalido('Preço promocional inválido em "' + nome + '".');
+      if (promo !== null && promo >= preco) return invalido('Em "' + nome + '", o preço promocional deve ser menor que o preço normal.');
       const descricao = r.querySelector('.f-desc').value.trim();
       const mudou = nome !== r._orig.nome || descricao !== r._orig.descricao;
       const reg = {
@@ -261,7 +261,7 @@
         ordem: i + 1,
         pedido: mudou ? null : r._orig.pedido   // se renomeou, o texto do WhatsApp passa a ser "Nome (descrição)"
       };
-      if (r._orig.id) { reg.id = r._orig.id; existentes.push(reg); } else novos.push(reg);
+      if (r._orig.id) { reg.id = r._orig.id; existentes.push(reg); } else { novos.push(reg); novasLinhas.push(r); }
     }
 
     // dados da categoria (preço de atacado ou texto informativo)
@@ -272,15 +272,40 @@
     } else if (sec.querySelector('.c-info')) {
       upCat.info = sec.querySelector('.c-info').value.trim() || null;
     }
+    return { c, existentes, novos, novasLinhas, upCat };
+  }
 
+  // grava uma categoria já validada; devolve o erro (ou null se deu certo)
+  async function gravarCategoria(d) {
+    const r1 = Object.keys(d.upCat).length ? await db.from('categorias').update(d.upCat).eq('slug', d.c.slug) : { error: null };
+    if (r1.error) return r1.error;
+    const r2 = d.existentes.length ? await db.from('produtos').upsert(d.existentes) : { error: null };
+    if (r2.error) return r2.error;
+    if (d.novos.length) {
+      const r3 = await db.from('produtos').insert(d.novos).select('id');
+      if (r3.error) return r3.error;
+      // os itens novos agora já existem: se outra categoria falhar e você tentar de novo, eles não duplicam
+      (r3.data || []).forEach((row, i) => { if (d.novasLinhas[i]) d.novasLinhas[i]._orig.id = row.id; });
+    }
+    return null;
+  }
+
+  // botão único: valida TODAS as categorias antes de gravar qualquer coisa
+  async function salvarTudo(botao) {
+    const secoes = [...$('cats').children];
+    const dados = [];
+    for (let i = 0; i < secoes.length; i++) {
+      const d = coletarCategoria(cats[i], secoes[i]);
+      if (!d) return;
+      dados.push(d);
+    }
     botao.disabled = true;
     try {
-      const r1 = Object.keys(upCat).length ? await db.from('categorias').update(upCat).eq('slug', c.slug) : { error: null };
-      const r2 = existentes.length ? await db.from('produtos').upsert(existentes) : { error: null };
-      const r3 = novos.length ? await db.from('produtos').insert(novos) : { error: null };
-      const falha = r1.error || r2.error || r3.error;
-      if (falha) throw falha;
-      dizer(c.titulo + ' salvo!');
+      for (const d of dados) {
+        const falha = await gravarCategoria(d);
+        if (falha) throw falha;
+      }
+      dizer('Cardápio salvo!');
       await carregarCardapio();
     } catch (err) {
       console.error('Erro ao salvar:', err);
@@ -289,6 +314,8 @@
       botao.disabled = false;
     }
   }
+
+  $('salvar-tudo').addEventListener('click', () => salvarTudo($('salvar-tudo')));
 
   /* ---------- Feedbacks ---------- */
   let fbs = [];

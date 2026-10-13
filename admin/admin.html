@@ -84,7 +84,7 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
 .a-acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .a-btn-claro { background: transparent; color: var(--azul); border: 2px solid var(--azul); }
 
-.a-aviso { position: fixed; left: 50%; bottom: 24px; z-index: 50; max-width: calc(100% - 32px); padding: 12px 22px; border-radius: 999px; background: var(--azul); color: var(--creme); font-size: 14px; font-weight: 600; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+.a-aviso { position: fixed; left: 50%; bottom: 92px; z-index: 50; max-width: calc(100% - 32px); padding: 12px 22px; border-radius: 999px; background: var(--azul); color: var(--creme); font-size: 14px; font-weight: 600; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
 .a-aviso.visivel { opacity: 1; transform: translate(-50%, 0); }
 .a-aviso.erro { background: #c0310b; }
 
@@ -106,6 +106,10 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
   .a-linha { grid-template-columns: 1fr 1fr; }
   .a-linha .c-nome, .a-linha .c-desc { grid-column: 1 / -1; }
 }
+
+  /* botão único "Salvar tudo" do cardápio (fixo no rodapé enquanto rola) */
+  .a-salvar-tudo { position: sticky; bottom: 0; z-index: 20; display: flex; justify-content: center; padding: 16px 0 12px; background: linear-gradient(to top, var(--creme) 65%, rgba(251, 247, 239, 0)); }
+  .a-salvar-tudo .a-btn { padding: 14px 44px; box-shadow: 0 8px 22px rgba(255, 90, 0, .35); }
   </style>
 </head>
 <body>
@@ -167,8 +171,9 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
 
       <!-- Cardápio -->
       <section id="a-cardapio" hidden>
-        <p class="a-dica a-dica-topo">Altere nomes, descrições e preços. Desmarque <b>Visível</b> para esconder um doce sem apagar. Depois de editar, clique em <b>Salvar</b> da categoria.</p>
+        <p class="a-dica a-dica-topo">Altere nomes, descrições e preços. Desmarque <b>Visível</b> para esconder um doce sem apagar. Depois de editar, clique em <b>Salvar tudo</b>: ele salva todas as categorias de uma vez.</p>
         <div id="cats"></div>
+        <div class="a-salvar-tudo"><button type="button" class="a-btn" id="salvar-tudo">Salvar tudo</button></div>
       </section>
 
       <!-- Feedbacks -->
@@ -366,9 +371,7 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
       lista.appendChild(nova);
       nova.querySelector('.f-nome').focus();
     });
-    const salvar = el('button', { type: 'button', class: 'a-btn' }, 'Salvar ' + c.titulo);
-    salvar.addEventListener('click', () => salvarCategoria(c, sec, salvar));
-    acoes.append(add, salvar);
+    acoes.append(add);
     sec.appendChild(acoes);
     return sec;
   }
@@ -426,20 +429,22 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
 
   const numero = (txt) => { const n = parseFloat(String(txt).replace(',', '.')); return Number.isFinite(n) ? n : null; };
 
-  async function salvarCategoria(c, sec, botao) {
+  // lê e valida uma categoria; devolve os dados para gravar (ou null, já avisando o erro na tela)
+  function coletarCategoria(c, sec) {
+    const invalido = (msg) => { dizer(msg, true); return null; };
     const linhas = [...sec.querySelectorAll('.a-linha')];
-    const existentes = [], novos = [];
+    const existentes = [], novos = [], novasLinhas = [];
 
     for (let i = 0; i < linhas.length; i++) {
       const r = linhas[i];
       const nome = r.querySelector('.f-nome').value.trim();
       const preco = numero(r.querySelector('.f-preco').value);
-      if (!nome) return dizer('Há um item sem nome (linha ' + (i + 1) + ' de ' + c.titulo + ').', true);
-      if (preco === null || preco < 0) return dizer('Preço inválido em "' + nome + '".', true);
+      if (!nome) return invalido('Há um item sem nome (linha ' + (i + 1) + ' de ' + c.titulo + ').');
+      if (preco === null || preco < 0) return invalido('Preço inválido em "' + nome + '".');
       const promoTxt = r.querySelector('.f-promo').value.trim();
       const promo = promoTxt === '' ? null : numero(promoTxt);
-      if (promoTxt !== '' && (promo === null || promo < 0)) return dizer('Preço promocional inválido em "' + nome + '".', true);
-      if (promo !== null && promo >= preco) return dizer('Em "' + nome + '", o preço promocional deve ser menor que o preço normal.', true);
+      if (promoTxt !== '' && (promo === null || promo < 0)) return invalido('Preço promocional inválido em "' + nome + '".');
+      if (promo !== null && promo >= preco) return invalido('Em "' + nome + '", o preço promocional deve ser menor que o preço normal.');
       const descricao = r.querySelector('.f-desc').value.trim();
       const mudou = nome !== r._orig.nome || descricao !== r._orig.descricao;
       const reg = {
@@ -453,7 +458,7 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
         ordem: i + 1,
         pedido: mudou ? null : r._orig.pedido   // se renomeou, o texto do WhatsApp passa a ser "Nome (descrição)"
       };
-      if (r._orig.id) { reg.id = r._orig.id; existentes.push(reg); } else novos.push(reg);
+      if (r._orig.id) { reg.id = r._orig.id; existentes.push(reg); } else { novos.push(reg); novasLinhas.push(r); }
     }
 
     // dados da categoria (preço de atacado ou texto informativo)
@@ -464,15 +469,40 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
     } else if (sec.querySelector('.c-info')) {
       upCat.info = sec.querySelector('.c-info').value.trim() || null;
     }
+    return { c, existentes, novos, novasLinhas, upCat };
+  }
 
+  // grava uma categoria já validada; devolve o erro (ou null se deu certo)
+  async function gravarCategoria(d) {
+    const r1 = Object.keys(d.upCat).length ? await db.from('categorias').update(d.upCat).eq('slug', d.c.slug) : { error: null };
+    if (r1.error) return r1.error;
+    const r2 = d.existentes.length ? await db.from('produtos').upsert(d.existentes) : { error: null };
+    if (r2.error) return r2.error;
+    if (d.novos.length) {
+      const r3 = await db.from('produtos').insert(d.novos).select('id');
+      if (r3.error) return r3.error;
+      // os itens novos agora já existem: se outra categoria falhar e você tentar de novo, eles não duplicam
+      (r3.data || []).forEach((row, i) => { if (d.novasLinhas[i]) d.novasLinhas[i]._orig.id = row.id; });
+    }
+    return null;
+  }
+
+  // botão único: valida TODAS as categorias antes de gravar qualquer coisa
+  async function salvarTudo(botao) {
+    const secoes = [...$('cats').children];
+    const dados = [];
+    for (let i = 0; i < secoes.length; i++) {
+      const d = coletarCategoria(cats[i], secoes[i]);
+      if (!d) return;
+      dados.push(d);
+    }
     botao.disabled = true;
     try {
-      const r1 = Object.keys(upCat).length ? await db.from('categorias').update(upCat).eq('slug', c.slug) : { error: null };
-      const r2 = existentes.length ? await db.from('produtos').upsert(existentes) : { error: null };
-      const r3 = novos.length ? await db.from('produtos').insert(novos) : { error: null };
-      const falha = r1.error || r2.error || r3.error;
-      if (falha) throw falha;
-      dizer(c.titulo + ' salvo!');
+      for (const d of dados) {
+        const falha = await gravarCategoria(d);
+        if (falha) throw falha;
+      }
+      dizer('Cardápio salvo!');
       await carregarCardapio();
     } catch (err) {
       console.error('Erro ao salvar:', err);
@@ -481,6 +511,8 @@ input[type="file"] { font-family: var(--fonte); font-size: 14px; }
       botao.disabled = false;
     }
   }
+
+  $('salvar-tudo').addEventListener('click', () => salvarTudo($('salvar-tudo')));
 
   /* ---------- Feedbacks ---------- */
   let fbs = [];
