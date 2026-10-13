@@ -278,11 +278,13 @@
       const r1 = Object.keys(upCat).length ? await db.from('categorias').update(upCat).eq('slug', c.slug) : { error: null };
       const r2 = existentes.length ? await db.from('produtos').upsert(existentes) : { error: null };
       const r3 = novos.length ? await db.from('produtos').insert(novos) : { error: null };
-      if (r1.error || r2.error || r3.error) throw new Error('falhou');
+      const falha = r1.error || r2.error || r3.error;
+      if (falha) throw falha;
       dizer(c.titulo + ' salvo!');
       await carregarCardapio();
     } catch (err) {
-      dizer('Não foi possível salvar. Verifique sua conexão e se você está logada.', true);
+      console.error('Erro ao salvar:', err);
+      dizer('Não foi possível salvar: ' + ((err && err.message) || 'erro desconhecido'), true);
     } finally {
       botao.disabled = false;
     }
@@ -415,11 +417,13 @@
     try {
       const r1 = existentes.length ? await db.from('feedbacks').upsert(existentes) : { error: null };
       const r2 = novos.length ? await db.from('feedbacks').insert(novos) : { error: null };
-      if (r1.error || r2.error) throw new Error('falhou');
+      const falha = r1.error || r2.error;
+      if (falha) throw falha;
       dizer('Feedbacks salvos!');
       await carregarFeedbacks();
     } catch (err) {
-      dizer('Não foi possível salvar. Verifique sua conexão e se você está logada.', true);
+      console.error('Erro ao salvar:', err);
+      dizer('Não foi possível salvar: ' + ((err && err.message) || 'erro desconhecido'), true);
     } finally {
       botao.disabled = false;
     }
