@@ -670,9 +670,18 @@ const FBC = (function () {
         const s = document.createElement('span'); s.textContent = p.descricao || '';
         div.append(b, s);
 
+        // preço promocional: o .preco mostra só o valor que vale (o carrinho lê ele); o preço antigo vai num <s> separado
+        const emPromo = p.preco_promo !== null && p.preco_promo !== undefined && Number(p.preco_promo) < Number(p.preco);
         const preco = document.createElement('span');
         preco.className = 'preco';
-        preco.textContent = brl(p.preco);
+        preco.textContent = brl(emPromo ? p.preco_promo : p.preco);
+        let antigo = null;
+        if (emPromo) {
+          antigo = document.createElement('s');
+          antigo.className = 'preco-antigo';
+          antigo.textContent = brl(p.preco);
+          antigo.setAttribute('aria-label', 'de ' + brl(p.preco) + ' por ' + brl(p.preco_promo));
+        }
 
         const a = document.createElement('a');
         a.className = 'pedir';
@@ -681,7 +690,7 @@ const FBC = (function () {
         a.setAttribute('aria-label', 'Adicionar ' + p.nome);
         a.textContent = 'Adicionar';
 
-        li.append(div, preco, a);
+        if (antigo) li.append(div, antigo, preco, a); else li.append(div, preco, a);
         ul.appendChild(li);
       });
     });

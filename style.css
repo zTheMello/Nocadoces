@@ -138,6 +138,7 @@ a { color: inherit; }
 .item b { font-weight: 800; }
 .item span { font-size: 14px; opacity: .8; }
 .item .preco { flex: none; font-weight: 800; font-size: 16px; opacity: 1; }
+.item .preco-antigo { flex: none; margin-right: -8px; font-size: 13px; font-weight: 600; opacity: .55; text-decoration: line-through; }
 .pedir { flex: none; background: var(--amarelo); color: var(--azul); font-size: 14px; font-weight: 800; padding: 10px 18px; border-radius: 999px; text-decoration: none; transition: filter .2s; }
 .pedir:hover { filter: brightness(1.08); }
 

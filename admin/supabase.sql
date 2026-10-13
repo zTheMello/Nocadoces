@@ -48,6 +48,16 @@ create table if not exists public.promo (
   fim         date
 );
 
+-- ---------- Atualização de bancos antigos ----------
+-- "create table if not exists" não adiciona colunas a tabelas que já existem.
+-- Estas linhas garantem que as colunas novas existam (não mexem em nada que já está lá).
+-- Ao criar uma coluna nova no futuro, acrescente aqui uma linha "add column if not exists".
+alter table public.categorias add column if not exists unidades    text;
+alter table public.categorias add column if not exists passo       int;
+alter table public.produtos   add column if not exists preco_promo numeric check (preco_promo >= 0);
+alter table public.produtos   add column if not exists destaque    boolean not null default false;
+alter table public.produtos   add column if not exists pedido      text;
+
 -- ---------- Segurança (RLS): todos leem, só a cliente escreve ----------
 alter table public.categorias enable row level security;
 alter table public.produtos   enable row level security;
@@ -137,3 +147,6 @@ end $$;
 insert into public.promo (id, ativo, titulo, texto, botao_texto, botao_link) values
   (1, false, 'Promoção da semana', 'Escreva aqui o texto da promoção.', 'Pedir pelo WhatsApp', 'https://wa.me/5583991839139')
 on conflict (id) do nothing;
+
+-- Atualiza o cache do esquema da API do Supabase (reconhece as colunas novas na hora)
+notify pgrst, 'reload schema';
