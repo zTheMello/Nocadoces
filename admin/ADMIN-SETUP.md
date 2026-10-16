@@ -30,6 +30,12 @@ Depois acesse `/admin/admin.html`, entre e teste uma alteração.
 O `supabase.sql` é reexecutável: se já instalou antes, rode o arquivo de novo no **SQL Editor** para criar a tabela de feedbacks e outras novidades, sem duplicar o cardápio.
 Depois publique o `index.html` e a pasta `admin/`, abra a aba **Feedbacks** do painel e cadastre os comentários. Enquanto não houver nenhum cadastrado, o site mostra depoimentos de exemplo.
 
+## Atualização do novo painel (Pedidos, Estoque, Financeiro, Relatórios, Clientes, Configurações)
+1. No **SQL Editor** do Supabase, rode o arquivo `supabase-painel.sql` (pode rodar de novo sem duplicar nada).
+2. Publique no GitHub: `script.js` (raiz) e `admin/admin.html`.
+3. Entre no painel: o menu lateral mostra todas as seções. Os pedidos enviados pelo carrinho do site passam a aparecer em **Pedidos**.
+4. O número de WhatsApp dos pedidos pode ser trocado em **Configurações** (o link `wa.me` fixo do `index.html` não muda sozinho).
+
 ## Observações
 - Se o banco ficar fora do ar, o site continua mostrando o cardápio que está escrito no `index.html`.
 - Projetos gratuitos do Supabase podem ser pausados após um período sem uso. Os acessos ao site contam como uso, mas confira a política atual no painel do Supabase.

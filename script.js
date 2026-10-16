@@ -131,7 +131,25 @@
 
 /* ===== CARRINHO ===== */
 (function () {
-  const NUMERO = '5583991839139';
+  let NUMERO = '5583991839139';
+  const cfg = window.NOCA_CONFIG || {};
+  const bancoOk = cfg.url && cfg.chave && cfg.url.indexOf('SEU-PROJETO') === -1;
+  const cabec = () => { const h = { apikey: cfg.chave }; if (cfg.chave.indexOf('eyJ') === 0) h.Authorization = 'Bearer ' + cfg.chave; return h; };
+  // número do WhatsApp editável no painel (Configurações); se falhar, vale o número acima
+  if (bancoOk) fetch(cfg.url + '/rest/v1/configuracoes?id=eq.1&select=whatsapp', { headers: cabec() })
+    .then((r) => (r.ok ? r.json() : []))
+    .then((d) => { const n = d[0] && String(d[0].whatsapp || ''); if (/^\d{12,13}$/.test(n)) NUMERO = n; })
+    .catch(() => {});
+  // guarda o pedido no painel (aba Pedidos); nunca atrapalha o envio pelo WhatsApp
+  function registrarPedido() {
+    if (!bancoOk) return;
+    const lista = itens.map((it) => ({ nome: String(it.nome).slice(0, 120), qtd: it.qtd, obs: it.obs && it.obs.trim() ? it.obs.trim().slice(0, 200) : null, subtotal: subtotal(it) }));
+    fetch(cfg.url + '/rest/v1/pedidos', {
+      method: 'POST', keepalive: true,
+      headers: Object.assign({ 'Content-Type': 'application/json', Prefer: 'return=minimal' }, cabec()),
+      body: JSON.stringify({ cliente_nome: nomeEl.value.trim().slice(0, 80) || null, data_desejada: dataEl.value || null, itens: lista, total: lista.reduce((t, i) => t + i.subtotal, 0) })
+    }).catch(() => {});
+  }
   const CHAVE = 'nocadoces-carrinho';
   const $ = (id) => document.getElementById(id);
   const botao = $('carrinho-botao'), gaveta = $('carrinho'), fundo = $('carrinho-fundo');
@@ -257,6 +275,7 @@
     msg += '\n\nValor estimado: ' + totalEl.textContent;
     if (nomeEl.value.trim()) msg += '\nNome: ' + nomeEl.value.trim();
     if (dataEl.value) msg += '\nData desejada: ' + dataEl.value.split('-').reverse().join('/');
+    registrarPedido();
     window.open('https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
   });
 
