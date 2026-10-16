@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- ===== HEAD ===== -->
+ 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Noca Doces | Docinhos por encomenda</title>
   <meta name="description" content="Docinhos artesanais por encomenda. Adoçando o mundo, um docinho por vez.">
   <meta name="author" content="zthemello">
 
-  <!-- Fontes e estilos -->
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;1,400&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ===== BODY ===== -->
+  
 
-  <!-- Símbolos SVG reutilizáveis (decoração da seção de feedbacks) -->
+  
   <svg class="svg-simbolos" width="0" height="0" aria-hidden="true" focusable="false">
     <symbol id="fbc-coracao" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.8 8.2 2.6 4.5 6.2 4.5c2.1 0 3.7 1.2 4.6 2.7l1.2 1.9 1.2-1.9c.9-1.5 2.5-2.7 4.6-2.7 3.6 0 5.4 3.7 3.8 7.2C19.5 16.4 12 21 12 21z"/></symbol>
     <symbol id="fbc-ramo" viewBox="0 0 120 220">
@@ -33,8 +33,7 @@
     </symbol>
   </svg>
 
-  <!-- ===== TOPO: banner de promoção, cabeçalho e menu ===== -->
-  <!-- BANNER DE PROMOÇÃO (editado pelo painel /admin/admin.html; fica escondido quando não há promoção) -->
+  
   <div class="promo" id="promo" role="region" aria-label="Promoção" hidden>
     <img class="promo-img" id="promo-img" alt="" hidden>
     <p class="promo-texto"><b id="promo-titulo"></b><span id="promo-desc"></span></p>
@@ -42,13 +41,13 @@
     <button class="promo-fechar" id="promo-fechar" type="button" aria-label="Fechar aviso de promoção">&times;</button>
   </div>
 
-  <!-- CABEÇALHO -->
+  
   <header class="topo">
     <div class="logo"><b>N<span class="logo-o" id="logo-o">O</span>CA</b>DOCES</div>
     <a class="btn btn-sm" href="#cardapio">Fazer encomenda</a>
   </header>
 
-  <!-- MENU FLUTUANTE -->
+  
   <nav class="menu-flutuante" id="menu" aria-label="Menu principal">
     <ul class="menu-lista" id="menu-lista">
       <li><a href="#inicio">Início</a></li>
@@ -63,10 +62,10 @@
     </button>
   </nav>
 
-  <!-- ===== MAIN: conteúdo principal ===== -->
+  
   <main id="conteudo">
 
-  <!-- HERO -->
+  
   <section class="hero" id="inicio">
     <span class="forma f1"></span>
     <span class="forma f2"></span>
@@ -82,7 +81,7 @@
     </div>
   </section>
 
-  <!-- DIFERENCIAIS -->
+  
   <section class="secao container" id="diferenciais">
     <h2 class="titulo-script">Por quê Noca Doces?</h2>
     <div class="grid-4">
@@ -93,7 +92,7 @@
     </div>
   </section>
 
-  <!-- PROMOÇÃO EM DESTAQUE (mesmos dados do banner do topo; editado pelo painel) -->
+  
   <section class="promo-destaque" id="promo-destaque" aria-label="Promoção em destaque" hidden>
     <div class="container">
       <div class="promo-card">
@@ -108,7 +107,7 @@
     </div>
   </section>
 
-    <!-- GALERIA -->
+    
   <section class="secao cs" id="galeria" aria-labelledby="galeria-titulo">
     <span class="forma f1"></span>
     <span class="forma f2"></span>
@@ -191,7 +190,7 @@
   </section>
 
 
-  <!-- CARDÁPIO -->
+ 
   <section class="secao branco" id="cardapio">
     <div class="container">
       <h2 class="titulo-script">Cardápio</h2>
@@ -204,7 +203,7 @@
         <button class="aba" role="tab" data-alvo="p-barras" aria-selected="false">Barras</button>
       </div>
 
-      <!-- Clássicos -->
+      
       <div class="painel ativo" id="p-classicos" role="tabpanel" data-granel="1.3">
         <p class="painel-info">Unidade <b>R$ 2</b> · 50 und <b>R$ 65</b> · 100 und <b>R$ 130</b></p>
         <ul class="itens">
@@ -217,7 +216,7 @@
         </ul>
       </div>
 
-      <!-- Especiais -->
+      
       <div class="painel" id="p-especiais" role="tabpanel" data-granel="1.7" hidden>
         <p class="painel-info">Unidade <b>R$ 3</b> · 50 und <b>R$ 85</b> · 100 und <b>R$ 170</b></p>
         <ul class="itens">
@@ -230,7 +229,7 @@
         </ul>
       </div>
 
-      <!-- Trufas -->
+      
       <div class="painel" id="p-trufas" role="tabpanel" hidden>
         <p class="painel-info">Pronta entrega e encomenda</p>
         <ul class="itens">
@@ -246,7 +245,7 @@
         </ul>
       </div>
 
-      <!-- Barras -->
+      
       <div class="painel" id="p-barras" role="tabpanel" data-unidades="1,2,3" data-passo="1" hidden>
         <p class="painel-info">Pronta entrega e encomenda</p>
         <ul class="itens">
@@ -257,10 +256,9 @@
     </div>
   </section>
 
-  <!-- FEEDBACKS -->
-  <!-- TROQUE nomes, textos e fotos pelos de clientes reais (fotos em ./imagens/clientes/) -->
+  
   <section class="secao fbc" id="feedbacks" aria-labelledby="fbc-titulo">
-    <!-- decoração delicada -->
+    
     <svg class="fbc-ramo fbc-ramo-esq" aria-hidden="true" focusable="false"><use href="#fbc-ramo"/></svg>
     <svg class="fbc-ramo fbc-ramo-dir" aria-hidden="true" focusable="false"><use href="#fbc-ramo"/></svg>
     <svg class="fbc-cora fbc-cora-1" aria-hidden="true" focusable="false"><use href="#fbc-coracao"/></svg>
@@ -274,7 +272,7 @@
       <div class="fbc-divisor" aria-hidden="true"><svg><use href="#fbc-coracao"/></svg></div>
     </div>
 
-    <!-- Os cards são criados pelo script.js (lista FBC_EXEMPLOS ou feedbacks do painel) -->
+    
     <div class="fbc-carrossel" role="region" aria-roledescription="carrossel" aria-label="Depoimentos de clientes">
       <div class="fbc-palco" tabindex="0" aria-live="off"></div>
       <div class="fbc-nav">
@@ -289,7 +287,7 @@
     </div>
   </section>
 
-  <!-- CTA FINAL -->
+ 
   <section class="cta" id="encomenda">
     <p class="script">Estamos com a agenda aberta</p>
     <h2>Faça sua encomenda</h2>
@@ -298,15 +296,13 @@
 
   </main>
 
-  <!-- ===== FOOTER ===== -->
+  
   <footer class="rodape">
     <p class="rodape-marca"><b>NOCA</b>DOCES · Instagram <a href="https://www.instagram.com/nocadoces/">@nocadoces</a></p>
     <p class="assinatura">Feito por <a href="https://github.com/zTheMello" target="_blank" rel="noopener">zthemello.</a></p>
   </footer>
 
-  <!-- ===== EXTRAS (sobrepostos à página): carrinho, aviso e visualizador ===== -->
-
-  <!-- CARRINHO -->
+ 
   <button class="carrinho-botao" id="carrinho-botao" type="button" aria-label="Abrir carrinho" aria-expanded="false" aria-controls="carrinho">
     <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6"/></svg>
     <span class="carrinho-qtd" id="carrinho-qtd" hidden>0</span>
@@ -334,7 +330,7 @@
   </aside>
   <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
 
-  <!-- LIGHTBOX DA VITRINE -->
+  
   <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Visualização ampliada" hidden>
     <button class="lb-fechar" id="lb-fechar" type="button" aria-label="Fechar visualização">&times;</button>
     <p class="lb-contador" id="lb-contador" aria-live="polite"></p>
